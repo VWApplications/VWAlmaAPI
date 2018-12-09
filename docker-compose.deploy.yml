@@ -4,15 +4,21 @@ services:
   vwa-nginx:
     image: victorhad/accounts:nginx
     container_name: vwa-server
+    build:
+      context: .
+      dockerfile: ./enviroments/nginx/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
-      - accounts
+      - vwa
 
   # VWA production app
   vwa:
     image: victorhad/accounts:latest
     container_name: vwa
+    build:
+      context: .
+      dockerfile: ./enviroments/production/Dockerfile
     depends_on:
       - db
 
