@@ -108,8 +108,8 @@ mediafiles
 staticfiles
 
 # Migrations and DB
-vwa_accounts/db.sqlite3
-vwa_accounts/**/migrations/**
-!vwa_accounts/**/migrations
-!vwa_accounts/**/migrations/__init__.py
+project/db.sqlite3
+project/**/migrations/**
+!project/**/migrations
+!project/**/migrations/__init__.py
 .idea

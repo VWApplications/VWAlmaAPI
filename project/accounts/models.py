@@ -3,7 +3,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
-import uuid
 
 
 class UserProfileManager(BaseUserManager):
@@ -49,7 +48,6 @@ class UserProfileManager(BaseUserManager):
         # Inserts superuser privileges for the user
         user.is_superuser = True
         user.is_staff = True
-        user.is_teacher = True
 
         # Save the created superuser on database
         user.save(using=self._db)
@@ -57,7 +55,7 @@ class UserProfileManager(BaseUserManager):
         return user
 
 
-class User2(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     """
     Create the base of django standart user profile and allows us to
     add permission to our user model.
@@ -81,12 +79,6 @@ class User2(AbstractBaseUser, PermissionsMixin):
         verbose_name=_('Photo'),
         blank=True,
         null=True
-    )
-
-    is_teacher = models.BooleanField(
-        _('Is Teacher?'),
-        help_text=_("Verify if the user is teacher or student"),
-        default=False
     )
 
     # Use to determine if this user is currently active in the system
@@ -122,9 +114,6 @@ class User2(AbstractBaseUser, PermissionsMixin):
         help_text=_("Date that the user is updated."),
         auto_now=True
     )
-
-    # Attribute used to logout the user
-    jwt_secret = models.UUIDField(default=uuid.uuid4)
 
     # Help manager the user profile
     objects = UserProfileManager()

@@ -12,9 +12,12 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-APPS = []
+APPS = ['accounts',]
 
-EXTERNAL_APPS = []
+EXTERNAL_APPS = [
+    'rest_framework',
+    'rest_framework_swagger',
+]
 
 PRODUCTION_APPS = DJANGO_APPS + APPS + EXTERNAL_APPS
 

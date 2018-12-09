@@ -1,7 +1,4 @@
-from rest_framework.permissions import BasePermission
-from core.permissions import (
-    is_read_mode, is_logged, is_admin
-)
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class UpdateOwnProfile(BasePermission):
@@ -9,8 +6,7 @@ class UpdateOwnProfile(BasePermission):
     Allow users to edit their own profile.
     """
 
-    @staticmethod
-    def has_object_permission(request, view, obj):
+    def has_object_permission(self, request, view, obj):
         """
         Check user is trying to edit their own profile.
         """
@@ -27,8 +23,7 @@ class CreateListUserPermission(BasePermission):
     or if user is admin.
     """
 
-    @staticmethod
-    def has_permission(request, view):
+    def has_permission(self, request, view):
 
         if is_read_mode(request) or not is_logged(request):
             return True
@@ -46,3 +41,30 @@ def is_owner(request, obj):
     """
 
     return obj.id == request.user.id
+
+
+def is_read_mode(request):
+    """
+    List and Retrieve method, only read mode (safe methods)
+    """
+
+    if request.method in SAFE_METHODS:
+        return True
+
+    return False
+
+
+def is_logged(request):
+    """
+    Verify if user is logged or not
+    """
+
+    return request.user and request.user.is_authenticated
+
+
+def is_admin(request):
+    """
+    Verify if user is admin
+    """
+
+    return request.user.is_staff

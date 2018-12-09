@@ -12,7 +12,7 @@ class UserAdmin(admin.ModelAdmin):
 
     list_display = ['name', 'email', 'created_at']
     search_display = ['name', 'email']
-    list_filter = ['created_at', 'is_teacher', 'is_staff']
+    list_filter = ['created_at', 'is_staff']
 
 
 # Create models on django admin

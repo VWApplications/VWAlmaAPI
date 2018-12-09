@@ -20,10 +20,9 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = (
             'id', 'email', 'name', 'short_name',
-            'is_teacher', 'photo', 'last_login',
-            'created_at', 'updated_at'
+            'photo', 'last_login', 'created_at',
+            'updated_at'
         )
-        extra_kwargs = {'is_teacher': {'read_only': True}}
 
     def get_short_name(self, obj):
         """
@@ -115,9 +114,8 @@ class UserRegisterSerializer(ModelSerializer):
         model = User
         fields = (
             'id', 'name', 'email', 'short_name',
-            'is_teacher', 'photo', 'last_login',
-            'created_at', 'updated_at', 'password',
-            'confirm_password'
+            'photo', 'last_login', 'created_at',
+            'updated_at', 'password', 'confirm_password'
         )
 
     def validate(self, data):
@@ -148,14 +146,14 @@ class UserRegisterSerializer(ModelSerializer):
 
         user = User(
             email=validated_data['email'],
-            name=validated_data['name'],
-            is_teacher=validated_data['is_teacher']
+            name=validated_data['name']
         )
 
         if 'photo' in validated_data.keys():
             user.photo = validated_data['photo']
 
         user.set_password(validated_data['password'])
+
         user.save()
 
         return user

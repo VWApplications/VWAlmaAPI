@@ -42,11 +42,9 @@ class ReadUserTestCase(APITestCase):
         """
 
         users = User.objects.all()
-        serializer = UserRegisterSerializer(users, many=True)
         url = reverse('user-list')
         response = self.client.get(url)
         self.assertEqual(User.objects.count(), 2)
-        # self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_valid_own_user_detail(self):

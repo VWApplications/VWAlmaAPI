@@ -49,8 +49,8 @@ class UpdateUserPasswordTestCase(APITestCase):
             'new_password': 'pedro123456789',
             'confirm_password': 'pedro123456789'
         }
-        #response = self.client.put(self.url, data)
-        #self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.put(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_invalid_update_user_old_password(self):
         """
