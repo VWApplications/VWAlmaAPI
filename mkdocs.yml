@@ -1,0 +1,9 @@
+site_name: Template
+# site_description: 'Descrição do Site'
+# repo_url: https://github.com/VictorArnaud/.../
+theme: 'rtd-dropdown'
+
+pages:
+  - Sobre o projeto:
+    - Home: index.md
+    - Sobre: sobre.md

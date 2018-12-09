@@ -12,13 +12,13 @@ all: migrations migrate compilemessages superuser run
 .PHONE: all
 
 # Documentation
-# doc-serve:
+doc-serve:
 	# Run the mkdocs server
-	# mkdocs serve
+	mkdocs serve
 
-# doc:
+doc:
 	# Build the documentation
-	# mkdocs gh-deploy
+	mkdocs gh-deploy
 
 
 # DJANGO
@@ -29,9 +29,6 @@ include makefiles/test.mk
 
 # DOCKER
 include makefiles/docker.mk
-
-# INSTALL
-include makefiles/install.mk
 
 # SHELL
 # make <target>: Execute the commands inside the target

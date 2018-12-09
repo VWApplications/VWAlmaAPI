@@ -11,7 +11,7 @@ router = routers.DefaultRouter()
 router.register('users', account_views.UserViewSet, basename="user")
 
 # MUTABLE
-schema_view = get_swagger_view(title='Accounts API')
+schema_view = get_swagger_view(title='Restful API')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -12,7 +12,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-APPS = ['accounts',]
+APPS = ['accounts']
 
 EXTERNAL_APPS = [
     'rest_framework',

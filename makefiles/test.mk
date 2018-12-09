@@ -1,5 +1,5 @@
 # TESTS --------------------------------------------------------
-folder := pgtbl
+folder := accounts
 
 test: coverage report xml
 
