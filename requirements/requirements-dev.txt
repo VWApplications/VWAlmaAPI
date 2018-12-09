@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest-django==3.4.4
+django-rest-swagger==2.2.0
+djangorestframework-simplejwt==3.3

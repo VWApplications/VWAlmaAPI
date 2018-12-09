@@ -1,2 +1,3 @@
 # vwa-accounts
-Authentication microservice and package
+
+Reusable Django accounts microservice and package

@@ -102,3 +102,14 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Media and static files
+mediafiles
+staticfiles
+
+# Migrations and DB
+vwa_accounts/db.sqlite3
+vwa_accounts/**/migrations/**
+!vwa_accounts/**/migrations
+!vwa_accounts/**/migrations/__init__.py
+.idea
