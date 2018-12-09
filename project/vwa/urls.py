@@ -10,6 +10,7 @@ from accounts import views as account_views
 router = routers.DefaultRouter()
 router.register('users', account_views.UserViewSet, basename="user")
 
+# MUTABLE
 schema_view = get_swagger_view(title='Accounts API')
 
 urlpatterns = [
