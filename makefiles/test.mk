@@ -4,7 +4,7 @@ folder := accounts
 test: coverage report xml
 
 coverage:
-	# Execute all tests
+	# Execute all tests by django, we can use pytest instead
 	coverage run --source="." project/manage.py test ${folder}
 
 report:

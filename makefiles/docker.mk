@@ -41,7 +41,7 @@ images:
 	# List images
 	sudo docker images
 
-container := "accounts"
+container := "vwa"
 
 exec:
 	# Get in the bash of container
