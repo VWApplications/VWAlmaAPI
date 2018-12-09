@@ -113,3 +113,4 @@ project/**/migrations/**
 !project/**/migrations
 !project/**/migrations/__init__.py
 .idea
+.bash_history

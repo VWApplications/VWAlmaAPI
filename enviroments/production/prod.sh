@@ -10,7 +10,7 @@ python3 << END
 import sys
 import psycopg2
 try:
-    conn = psycopg2.connect(dbname="postgres", user="postgres", password="", host="db")
+    conn = psycopg2.connect(dbname="db", user="postgres", password="postgres", host="db")
 except psycopg2.OperationalError:
     sys.exit(-1)
 sys.exit(0)
@@ -27,14 +27,14 @@ find . -path "project/*/migrations/*.pyc"  -delete
 find . -path "project/*/migrations/*.py" -not -name "__init__.py" -delete
 
 echo "Deleting staticfiles"
-find . -path "project/vwa_accounts/staticfiles/*"  -delete
-find . -path "project/vwa_accounts/mediafiles/*"  -delete
+find . -path "project/vwa/staticfiles/*"  -delete
+find . -path "project/vwa/mediafiles/*"  -delete
 
 echo "Creating migrations and insert into psql database"
-python3 project/manage.py makemigrations
-python3 project/manage.py migrate
-python3 project/manage.py compilemessages
-python3 project/manage.py staticfiles
+make makemigrations
+make migrate
+make compilemessages
+make staticfiles
 
 echo "Run server"
-gunicorn --bind 0.0.0.0:8000 --chdir project vwa_accounts.wsgi
+gunicorn --bind 0.0.0.0:8000 --chdir project vwa.wsgi

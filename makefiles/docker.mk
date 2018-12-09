@@ -7,7 +7,7 @@ up:
 
 build:
 	# Rebuild the docker compose
-	sudo docker-compose -f ${file} build
+	sudo docker-compose -f ${file} up -d --build
 
 restart:
 	# Restart services
@@ -41,6 +41,8 @@ images:
 	# List images
 	sudo docker images
 
+container := "accounts"
+
 exec:
-	# Get in the bash of vwa container
-	sudo docker exec -it vwa bash
+	# Get in the bash of container
+	sudo docker exec -it ${container} bash

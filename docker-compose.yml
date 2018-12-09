@@ -2,8 +2,8 @@ version: '3'
 # Development enviroment
 services:
   accounts-local:
-    image: victorhad/vwa-accounts:local
-    container_name: vwa-accounts-local
+    image: victorhad/accounts:local
+    container_name: accounts-local
     build:
       context: .
       dockerfile: ./enviroments/local/Dockerfile

@@ -2,8 +2,8 @@ version: '3'
 # Homolog enviroment
 services:
   accounts-homolog:
-    image: victorhad/vwa-accounts:homolog
-    container_name: vwa-accounts-homolog
+    image: victorhad/accounts:homolog
+    container_name: accounts-homolog
     build:
       context: .
       dockerfile: ./enviroments/homolog/Dockerfile

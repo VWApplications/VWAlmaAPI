@@ -1,7 +1,7 @@
 FROM nginx:latest
 
 COPY ./enviroments/nginx/nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./project/vwa_accounts/staticfiles /usr/share/nginx/html
+COPY ./project/vwa/staticfiles /usr/share/nginx/html
 
 EXPOSE 8080
 

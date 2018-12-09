@@ -28,4 +28,4 @@ EXPOSE 8000
 RUN chmod +x enviroments/production/prod.sh
 ENTRYPOINT ["enviroments/production/prod.sh"]
 
-CMD ["gunicorn", "--bind 0.0.0.0:8000", "--chdir project", "vwa_accounts.wsgi"]
+CMD ["gunicorn", "--bind 0.0.0.0:8000", "--chdir project", "vwa.wsgi"]
