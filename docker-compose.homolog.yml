@@ -1,0 +1,11 @@
+version: '3'
+# Homolog enviroment
+services:
+  accounts-homolog:
+    image: victorhad/vwa-accounts:homolog
+    container_name: vwa-accounts-homolog
+    build:
+      context: .
+      dockerfile: ./enviroments/homolog/Dockerfile
+    ports:
+      - "8000:8080"

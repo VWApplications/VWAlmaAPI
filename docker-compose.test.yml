@@ -1,0 +1,13 @@
+version: '3'
+# Test enviroment
+services:
+  accounts-test:
+    image: victorhad/vwa-accounts:test
+    container_name: vwa-accounts-test
+    build:
+      context: .
+      dockerfile: ./enviroments/homolog/Dockerfile
+    environment:
+      - CODACY_PROJECT_TOKEN=2856565478ce4400a4cd4731950bfb89
+    ports:
+      - "8000:8080"
