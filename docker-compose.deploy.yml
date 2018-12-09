@@ -2,7 +2,7 @@ version: '3'
 services:
   # NGINX server
   vwa-nginx:
-    image: victorhad/accounts:nginx
+    image: victorhad/project:nginx
     container_name: vwa-server
     build:
       context: .
@@ -14,7 +14,7 @@ services:
 
   # VWA production app
   vwa:
-    image: victorhad/accounts:latest
+    image: victorhad/project:latest
     container_name: vwa
     build:
       context: .

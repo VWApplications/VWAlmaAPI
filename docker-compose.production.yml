@@ -2,7 +2,7 @@ version: '3'
 # Production enviroment
 services:
   vwa-nginx-production:
-    image: victorhad/accounts:nginx
+    image: victorhad/project:nginx
     build:
       context: .
       dockerfile: ./enviroments/nginx/Dockerfile
@@ -10,7 +10,7 @@ services:
       - vwa-production
 
   vwa-production:
-    image: victorhad/accounts:latest
+    image: victorhad/project:latest
     build:
       context: .
       dockerfile: ./enviroments/production/Dockerfile

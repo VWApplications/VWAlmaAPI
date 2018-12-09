@@ -2,7 +2,7 @@ version: '3'
 # Development enviroment
 services:
   vwa-local:
-    image: victorhad/accounts:local
+    image: victorhad/project:local
     container_name: vwa-local
     build:
       context: .

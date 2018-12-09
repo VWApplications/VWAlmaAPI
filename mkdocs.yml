@@ -1,6 +1,6 @@
-site_name: Template
-# site_description: 'Descrição do Site'
-# repo_url: https://github.com/VictorArnaud/.../
+site_name: Project
+# site_description: 'Descrição do Site Project'
+# repo_url: https://github.com/VictorArnaud/project/
 theme: 'rtd-dropdown'
 
 pages:
