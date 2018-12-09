@@ -27,8 +27,8 @@ find . -path "project/*/migrations/*.pyc"  -delete
 find . -path "project/*/migrations/*.py" -not -name "__init__.py" -delete
 
 echo "Deleting staticfiles"
-find . -path "project/vwa/staticfiles/*"  -delete
-find . -path "project/vwa/mediafiles/*"  -delete
+find . -path "project/staticfiles/*"  -delete
+find . -path "project/mediafiles/*"  -delete
 
 echo "Creating migrations and insert into psql database"
 make makemigrations

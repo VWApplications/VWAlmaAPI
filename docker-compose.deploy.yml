@@ -1,25 +1,25 @@
 version: '3'
 services:
   # NGINX server
-  accounts-nginx:
+  vwa-nginx:
     image: victorhad/accounts:nginx
-    container_name: accounts-server
+    container_name: vwa-server
     ports:
-      - "8000:8080"
+      - "8080:8080"
     depends_on:
       - accounts
 
-  # TBL production app
-  accounts:
+  # VWA production app
+  vwa:
     image: victorhad/accounts:latest
-    container_name: accounts
+    container_name: vwa
     depends_on:
       - db
 
   # Postgresql database
   db:
     image: postgres:latest
-    container_name: accounts-db
+    container_name: vwa-db
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres

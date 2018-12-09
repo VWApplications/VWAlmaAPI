@@ -1,15 +1,15 @@
 version: '3'
 # Production enviroment
 services:
-  accounts-nginx-production:
+  vwa-nginx-production:
     image: victorhad/accounts:nginx
     build:
       context: .
       dockerfile: ./enviroments/nginx/Dockerfile
     depends_on:
-      - accounts-production
+      - vwa-production
 
-  accounts-production:
+  vwa-production:
     image: victorhad/accounts:latest
     build:
       context: .
