@@ -6,9 +6,15 @@ from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework_swagger.views import get_swagger_view
 from accounts import views as account_views
+from core import views as core_views
+from disciplines import views as discipline_views
+
 
 router = routers.DefaultRouter()
+router.register('tags', core_views.TagsViewSet, basename='tag')
+router.register('news', core_views.NewsViewSet, basename='new')
 router.register('users', account_views.UserViewSet, basename="user")
+router.register('disciplines', discipline_views.DisciplineViewSet, basename="discipline")
 
 # MUTABLE
 schema_view = get_swagger_view(title='Restful API')

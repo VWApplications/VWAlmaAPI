@@ -48,6 +48,7 @@ class UserProfileManager(BaseUserManager):
         # Inserts superuser privileges for the user
         user.is_superuser = True
         user.is_staff = True
+        user.is_teacher = True
 
         # Save the created superuser on database
         user.save(using=self._db)
@@ -79,6 +80,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_('Photo'),
         blank=True,
         null=True
+    )
+
+    is_teacher = models.BooleanField(
+        _('Is Teacher?'),
+        help_text=_("Verify if the user is teacher or student"),
+        default=False
     )
 
     # Use to determine if this user is currently active in the system

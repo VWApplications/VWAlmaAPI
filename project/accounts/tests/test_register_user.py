@@ -29,6 +29,7 @@ class CreateUserTestCase(APITestCase):
         )
         self.data = {
             'name': 'Fulano de Tal',
+            'is_teacher': True,
             'email': 'fulano@gmail.com',
             'password': 'fulano123456',
             'confirm_password': 'fulano123456'
@@ -43,12 +44,23 @@ class CreateUserTestCase(APITestCase):
         self.superuser.delete()
         self.user.delete()
 
-    def test_valid_create_user(self):
+    def test_valid_create_teacher_user(self):
         """
         Create a new user in the system.
         """
 
         self.assertEqual(User.objects.count(), 2)
+        response = self.client.post(self.url, self.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), 3)
+
+    def test_valid_create_student_user(self):
+        """
+        Create a new user in the system.
+        """
+
+        self.assertEqual(User.objects.count(), 2)
+        self.data['is_teacher'] = False
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 3)

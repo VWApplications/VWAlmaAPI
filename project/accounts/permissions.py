@@ -1,4 +1,7 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from core.permissions import (
+    is_read_mode, is_logged, is_admin
+)
 
 
 class UpdateOwnProfile(BasePermission):
@@ -41,30 +44,3 @@ def is_owner(request, obj):
     """
 
     return obj.id == request.user.id
-
-
-def is_read_mode(request):
-    """
-    List and Retrieve method, only read mode (safe methods)
-    """
-
-    if request.method in SAFE_METHODS:
-        return True
-
-    return False
-
-
-def is_logged(request):
-    """
-    Verify if user is logged or not
-    """
-
-    return request.user and request.user.is_authenticated
-
-
-def is_admin(request):
-    """
-    Verify if user is admin
-    """
-
-    return request.user.is_staff
