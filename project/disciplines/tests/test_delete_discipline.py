@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from discipline.models import Discipline
+from disciplines.models import Discipline
 from django.contrib.auth import get_user_model
 
 # Get the custom user from settings
