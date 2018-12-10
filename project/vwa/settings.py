@@ -18,7 +18,7 @@ from .config.security import SECRET_KEY
 from .config.database import DB_DEVELOPMENT, DB_PRODUCTION
 from .config.password import AUTH_PASSWORD_VALIDATORS
 from .config.files import STATIC_ROOT, MEDIA_ROOT, STATIC_URL, MEDIA_URL
-from .config.rest import REST_FRAMEWORK, SIMPLE_JWT
+from .config.rest import REST_FRAMEWORK, SIMPLE_JWT, SWAGGER_SETTINGS
 from .config.internacionalization import (
     PORTUGUESE,
     TIME_ZONE,
@@ -74,6 +74,9 @@ MEDIA_URL = MEDIA_URL
 # http://getblimp.github.io/django-rest-framework-jwt/
 REST_FRAMEWORK = REST_FRAMEWORK
 SIMPLE_JWT = SIMPLE_JWT
+SWAGGER_SETTINGS = SWAGGER_SETTINGS
+LOGIN_URL = 'rest_framework:login'
+LOGOUT_URL = 'rest_framework:logout'
 
 
 # Enviroments mode (development or production)

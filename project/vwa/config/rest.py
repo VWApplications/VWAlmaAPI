@@ -21,3 +21,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'AUTH_HEADER_TYPES': ('JWT',)
 }
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': True,
+    'SHOW_REQUEST_HEADERS': True
+}

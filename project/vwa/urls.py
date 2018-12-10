@@ -15,6 +15,7 @@ schema_view = get_swagger_view(title='Restful API')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', schema_view),
     path(
         'api-token/',
         jwt_views.TokenObtainPairView.as_view(),
@@ -27,7 +28,8 @@ urlpatterns = [
     ),
     path(
         'api-auth/',
-        include('rest_framework.urls')
+        include('rest_framework.urls'),
+        name='rest_framework'
     ),
 ]
 
