@@ -1,55 +1,69 @@
-# SERVER -------------------------------------------------------
-
-SERVER = 0.0.0.0:8080
-
-run: project/manage.py
-	# Run the development server
-	python3 project/manage.py runserver ${SERVER}
-
 # DATABASE -----------------------------------------------------
 
-migrations: project/manage.py
+migrations:
 	# Create all migrations from models
-	python3 project/manage.py makemigrations
+	docker-compose exec alma python3 manage.py makemigrations
 
-migrate: project/manage.py
+migrate:
 	# Migrate all migrations on database
-	python3 project/manage.py migrate
+	docker-compose exec alma python3 manage.py migrate
 
-superuser: project/manage.py
+shell:
+	# Run django shell
+	docker-compose exec alma python3 manage.py shell
+
+superuser:
 	# Create a super user on system.
-	python3 project/manage.py createsuperuser
+	docker-compose exec alma python3 manage.py createsuperuser
 
-sql: project/manage.py
-	# Show SQL commands
-	python3 project/manage.py sqlmigrate ${app_label} ${migration_name}
+install:
+	# Install some dependecy
+	docker-compose exec alma pip3 install ${package}
 
-# TRANSLATION --------------------------------------------------
+requirements:
+	# Verify all requirements
+	docker-compose exec alma pip3 freeze
 
-files := "project/*.py"
-
-messages:
-	# Create a django.po to insert translations (pt-BR)
-	django-admin makemessages -l pt_BR -i ${files}
-
-compilemessages:
-	# Create translations
-	django-admin compilemessages
-
-# STATIC FILES -------------------------------------------------
-
-staticfiles: project/manage.py
-	# Collect all static files
-	python3 project/manage.py collectstatic --noinput
+flake8:
+	# Run flake8
+	docker-compose exec alma flake8
 
 # POPULATE DB --------------------------------------------------
 
-json := database.json
+json_file := database.json
 
-fixture: project/manage.py
+fixture:
 	# Create files with data
-	python3 project/manage.py dumpdata ${model} --indent 4 > ${json}
+	docker-compose exec alma python3 manage.py dumpdata ${model} --indent 4 > ${json_file}
 
-populate: project/manage.py
+populate:
 	# Populate database with specific model
-	python3 project/manage.py loaddata project/**/fixtures/**.json
+	docker-compose exec alma python3 manage.py loaddata project/**/fixtures/**.json
+
+
+# BACKUP e RESTORE
+
+dump:
+	# Fazer um backup do banco de dados
+	docker-compose exec postgres pg_dump -h localhost -p 5432 -U alma -F c -b -v -f backup/db.backup alma_db
+
+psql:
+	# Entrar no banco de dados postgres
+	docker-compose exec postgres psql -U alma -d alma_db
+
+drop:
+	# Remove o banco de dados para ativar a restauração
+	docker-compose exec postgres dropdb -U alma alma_db
+
+restore:
+	# Restaurar o banco de dados
+	docker-compose exec postgres pg_restore -h localhost -p 5432 -U alma --create --dbname=postgres --verbose backup/db.backup
+
+
+# RUN TESTS ------------------------------------------------------
+
+path := .
+
+test:
+	# Run all tests
+	docker-compose exec alma python3 manage.py test ${path} --keepdb

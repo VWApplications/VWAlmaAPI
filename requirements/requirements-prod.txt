@@ -1,4 +1,0 @@
--r requirements.txt
-django-cors-headers==2.4.0
-gunicorn==19.9.0
-psycopg2==2.7.3.1

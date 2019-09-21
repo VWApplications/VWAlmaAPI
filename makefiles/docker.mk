@@ -1,48 +1,50 @@
 # DOCKER DEPLOY ------------------------------------------------
-file := "docker-compose.yml"
-
 up:
 	# Create and start containers
-	sudo docker-compose -f ${file} up -d
+	docker-compose up
 
 build:
 	# Rebuild the docker compose
-	sudo docker-compose -f ${file} up -d --build
+	docker-compose up --build
 
 restart:
 	# Restart services
-	sudo docker-compose -f ${file} restart
+	docker-compose restart
 
 logs:
 	# View output from containers
-	sudo docker-compose -f ${file} logs -f -t
+	docker-compose logs -f -t
 
 start:
 	# Start services
-	sudo docker-compose -f ${file} start
+	docker-compose start
 
 stop:
 	# Stop services
-	sudo docker-compose -f ${file} stop
+	docker-compose stop
 
 ps:
 	# List all running containers
-	sudo docker-compose -f ${file} ps
+	docker-compose ps
+
+ps_all:
+	# List all containers
+	docker ps -a
 
 down:
 	# Stop and Remove all containers
-	sudo docker-compose -f ${file} down
+	docker-compose down
 
 help:
 	# Help of docker-compose commands
-	sudo docker-compose help
+	docker-compose help
 
 images:
 	# List images
-	sudo docker images
+	docker images
 
-container := "vwa"
+container := "alma"
 
 exec:
 	# Get in the bash of container
-	sudo docker exec -it ${container} bash
+	docker-compose exec ${container} bash

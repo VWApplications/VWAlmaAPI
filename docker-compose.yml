@@ -1,13 +1,40 @@
 version: '3'
-# Development enviroment
 services:
-  vwa-local:
-    image: victorhad/project:local
-    container_name: vwa-local
-    build:
-      context: .
-      dockerfile: ./enviroments/local/Dockerfile
+  postgres:
+    image: postgres:latest
+    container_name: alma_postgres
     volumes:
-      - .:/home/developer/
+      - ./.ignore/postgres:/var/lib/postgresql/data
+      - ./backup:/backup
+    environment:
+      - POSTGRES_PASSWORD=alma
+      - POSTGRES_USER=alma
+      - POSTGRES_DB=alma_db
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: alma_pgadmin
     ports:
-      - "8000:8080"
+      - "5433:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=victorhad@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=alma
+    volumes:
+      - ./.ignore/var/lib/pgadmin:/var/lib/pgadmin
+
+  alma:
+    image: vwapp/alma:latest
+    container_name: alma
+    build: .
+    environment:
+      - POSTGRES_DB=alma_db
+      - POSTGRES_USER=alma
+      - POSTGRES_PASSWORD=alma
+      - POSTGRES_HOST=postgres
+    volumes:
+      - ./project/:/software
+    ports:
+      - "80:8000"
+    restart: on-failure
+    depends_on:
+      - postgres

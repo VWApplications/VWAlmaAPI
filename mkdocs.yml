@@ -1,9 +1,0 @@
-site_name: Project
-# site_description: 'Descrição do Site Project'
-# repo_url: https://github.com/VictorArnaud/project/
-theme: 'rtd-dropdown'
-
-pages:
-  - Sobre o projeto:
-    - Home: index.md
-    - Sobre: sobre.md

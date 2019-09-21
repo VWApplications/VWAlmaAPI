@@ -108,9 +108,6 @@ mediafiles
 staticfiles
 
 # Migrations and DB
-project/db.sqlite3
-project/**/migrations/**
-!project/**/migrations
-!project/**/migrations/__init__.py
+.ignore/
 .idea
 .bash_history
