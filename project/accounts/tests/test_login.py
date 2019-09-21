@@ -1,5 +1,4 @@
 from django.urls import reverse
-from django.contrib.auth import SESSION_KEY
 from rest_framework import status
 from rest_framework.test import APITestCase
 from accounts.models import User

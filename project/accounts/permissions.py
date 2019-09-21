@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import BasePermission
 from core.permissions import (
     is_read_mode, is_logged, is_admin
 )

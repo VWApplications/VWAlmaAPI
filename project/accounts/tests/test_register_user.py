@@ -1,5 +1,3 @@
-import io
-
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from rest_framework import status

@@ -44,7 +44,7 @@ def is_teacher(request):
     """
     Verify if logged user is teacher.
     """
-    
+
     is_teacher = False
 
     if is_logged(request):

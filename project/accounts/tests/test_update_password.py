@@ -22,7 +22,7 @@ class UpdateUserPasswordTestCase(APITestCase):
             email='victorhad@gmail.com',
             password='victorhad123456'
         )
-        self.user = User.objects.create(
+        self.user = User.objects.create_user(
             name='Pedro Calile',
             email='pedro@gmail.com',
             password='pedro123456'
@@ -45,7 +45,7 @@ class UpdateUserPasswordTestCase(APITestCase):
         """
 
         data = {
-            'password': self.user.password,
+            'password': 'pedro123456',
             'new_password': 'pedro123456789',
             'confirm_password': 'pedro123456789'
         }

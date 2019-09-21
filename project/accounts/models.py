@@ -170,6 +170,5 @@ class User(AbstractBaseUser, PermissionsMixin):
         Some information about user class.
         """
 
-        verbose_name = _("User")
-        verbose_name_plural = _("Users")
+        db_table = "accounts"
         ordering = ('email',)

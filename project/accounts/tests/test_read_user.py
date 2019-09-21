@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from accounts.models import User
-from accounts.serializers import UserSerializer, UserRegisterSerializer
+from accounts.serializers import UserSerializer
 
 
 class ReadUserTestCase(APITestCase):
@@ -41,7 +41,6 @@ class ReadUserTestCase(APITestCase):
         Test found the user list.
         """
 
-        users = User.objects.all()
         url = reverse('user-list')
         response = self.client.get(url)
         self.assertEqual(User.objects.count(), 2)

@@ -59,6 +59,7 @@ class UserPasswordSerializer(ModelSerializer):
         write_only=True,
         style={'input_type': 'password'}
     )
+
     confirm_password = CharField(
         write_only=True,
         style={'input_type': 'password'}

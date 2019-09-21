@@ -140,7 +140,7 @@ class Discipline(models.Model):
         blank=True
     )
 
-     # Create a date when the discipline is created
+    # Create a date when the discipline is created
     created_at = models.DateTimeField(
         _('Created at'),
         help_text=_("Date that the discipline is created."),

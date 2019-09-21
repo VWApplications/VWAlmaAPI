@@ -46,7 +46,6 @@ class ReadNewsTestCase(APITestCase):
         Test found the user list.
         """
 
-        news = News.objects.all()
         url = reverse('new-list')
         response = self.client.get(url)
         self.assertEqual(News.objects.count(), 1)

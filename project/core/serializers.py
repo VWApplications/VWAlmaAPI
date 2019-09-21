@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from .models import News, Tag
 
+
 class TagSerializer(ModelSerializer):
     """
     A serializer for our tags objects.
@@ -59,7 +60,6 @@ class NewsExistsTagsCreateSerializer(ModelSerializer):
         Create news with tags
         """
 
-
         news = News(
             title=validated_data['title'],
             description=validated_data['description'],
@@ -84,7 +84,6 @@ class NewsUpdateSerializer(ModelSerializer):
     class Meta:
         model = News
         fields = ['id', 'title', 'description', 'image', 'link', 'tags']
-
 
     def update(self, instance, validated_data):
         """

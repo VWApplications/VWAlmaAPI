@@ -6,8 +6,9 @@ from rest_framework_simplejwt import views as jwt_views
 urlpatterns = [
     path('api-token/', jwt_views.TokenObtainPairView.as_view(), name='login'),
     path('refresh-token/', jwt_views.TokenRefreshView.as_view(), name='login'),
+    path('', include('core.urls')),
     path('users/', include('accounts.urls')),
-    path('wiki/', include('wiki.urls'))
+    path('disciplines/', include('disciplines.urls'))
 ]
 
 # While in development mode we will use relative URL for static and average
@@ -22,10 +23,3 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT
     )
-
-
-# router = routers.DefaultRouter()
-# router.register('tags', core_views.TagsViewSet, basename='tag')
-# router.register('news', core_views.NewsViewSet, basename='new')
-# router.register('users', account_views.UserViewSet, basename="user")
-# router.register('disciplines', discipline_views.DisciplineViewSet, basename="discipline")

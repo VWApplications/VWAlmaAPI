@@ -106,7 +106,6 @@ class DeleteUserTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(Discipline.objects.count(), 1)
 
-
     def test_not_find_discipline_to_delete(self):
         """
         Can't find discipline to delete, invalid url.
