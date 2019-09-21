@@ -20,10 +20,8 @@ APPS = [
 
 EXTERNAL_APPS = [
     'rest_framework',
-    'rest_framework_swagger',
+    'corsheaders',
     'django_filters',
 ]
 
-PRODUCTION_APPS = DJANGO_APPS + APPS + EXTERNAL_APPS
-
-DEVELOPMENT_APPS = PRODUCTION_APPS
+INSTALLED_APPS = DJANGO_APPS + APPS + EXTERNAL_APPS

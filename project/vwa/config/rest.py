@@ -15,15 +15,12 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20
 }
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 SIMPLE_JWT = {
     # Expiration time of token: 30 min
     # When expirated we need to get another token
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'AUTH_HEADER_TYPES': ('JWT',)
-}
-
-SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': True,
-    'SHOW_REQUEST_HEADERS': True
 }
