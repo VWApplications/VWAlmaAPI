@@ -84,7 +84,7 @@ class Discipline(models.Model):
         help_text=_("Students limit to get in the class."),
         validators=[
             MaxValueValidator(
-                60,
+                150,
                 _('There can be no more than %(limit_value)s students in the class.')
             ),
             MinValueValidator(
@@ -100,7 +100,7 @@ class Discipline(models.Model):
         help_text=_("Monitors limit to insert in the class."),
         validators=[
             MaxValueValidator(
-                5,
+                15,
                 _('There can be no more than %(limit_value)s monitors in the class.')
             ),
             MinValueValidator(
@@ -166,6 +166,5 @@ class Discipline(models.Model):
         return '{0}: {1} - {2}'.format(self.course, self.title, self.classroom)
 
     class Meta:
-        verbose_name = _("Discipline")
-        verbose_name_plural = _("Disciplines")
+        db_table = "disciplines"
         ordering = ['title', 'created_at']

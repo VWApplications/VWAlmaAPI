@@ -16,8 +16,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import filters
-from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import (
     UserSerializer, UserRegisterSerializer, UserPasswordSerializer
@@ -34,12 +32,6 @@ class UserViewSet(ModelViewSet):
     """
     View set to user.
     """
-
-    filter_backends = (filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend)
-    filterset_fields = ('is_teacher',)
-    ordering_fields = ('name', 'email')
-    search_fields = ('name', 'email')
-    ordering = ('name',)
 
     def get_queryset(self):
         """

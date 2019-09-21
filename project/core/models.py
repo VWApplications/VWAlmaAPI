@@ -20,8 +20,7 @@ class Tag(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = _("Tag")
-        verbose_name_plural = _("Tags")
+        db_table = "tags"
 
 
 class News(models.Model):
@@ -72,6 +71,5 @@ class News(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = 'News'
-        verbose_name_plural = 'News'
+        db_table = "news"
         ordering = ('created_at', 'title')

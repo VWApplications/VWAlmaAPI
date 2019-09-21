@@ -1,4 +1,3 @@
-from rest_framework import filters
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
@@ -16,10 +15,6 @@ class DisciplineViewSet(ModelViewSet):
     """
     View set to manage disciplines.
     """
-
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('title', 'course', 'classroom', 'teacher')
-    ordering = ('title',)
 
     queryset = Discipline.objects.all()
     serializer_class = DisciplineSerializer

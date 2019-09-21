@@ -1,9 +1,5 @@
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.filters import (
-    SearchFilter,
-    OrderingFilter
-)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -22,10 +18,6 @@ class NewsViewSet(ModelViewSet):
 
     queryset = News.objects.all()
     permission_classes = (CreateUpdateDestroyAdminPermission,)
-
-    filter_backends = (SearchFilter, OrderingFilter)
-    search_fields = ('title', 'tags__title')
-    ordering_fields = ('created_at',)
 
     def get_serializer_class(self):
         """

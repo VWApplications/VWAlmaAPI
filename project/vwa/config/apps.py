@@ -20,8 +20,7 @@ APPS = [
 
 EXTERNAL_APPS = [
     'rest_framework',
-    'corsheaders',
-    'django_filters',
+    'corsheaders'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + APPS + EXTERNAL_APPS
