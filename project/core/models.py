@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
+from django.utils import timezone
+from datetime import datetime
 
 class BaseModel(models.Model):
     """
@@ -20,6 +21,15 @@ class BaseModel(models.Model):
         help_text=_("Date that the object is updated."),
         auto_now=True
     )
+
+    def format_datetime(self, datetime, date_format="%d/%m/%Y %H:%M:%S"):
+        """
+        Get created at attribute formated
+        """
+
+        local_datetime = timezone.localtime(datetime)
+
+        return local_datetime.strftime(date_format)
 
     class Meta:
         abstract = True

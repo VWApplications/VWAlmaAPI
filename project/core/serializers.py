@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import News, Tag
 import logging
 
@@ -19,10 +19,18 @@ class NewsTagsSerializer(ModelSerializer):
     """
 
     tags = TagSerializer(many=True)
+    created_at = SerializerMethodField()
 
     class Meta:
         model = News
-        fields = ['id', 'title', 'description', 'image', 'link', 'tags']
+        fields = ['id', 'title', 'description', 'image', 'link', 'tags', 'created_at']
+
+    def get_created_at(self, obj):
+        """
+        Get the created_at formated
+        """
+
+        return obj.format_datetime(obj.created_at)
 
     def create_tags(self, tags, news):
         """
