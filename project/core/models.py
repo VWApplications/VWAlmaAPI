@@ -2,15 +2,35 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-class Tag(models.Model):
+class BaseModel(models.Model):
+    """
+    Atributos básico de todas as modelos.
+    """
+
+    # Create a date when the discipline is created
+    created_at = models.DateTimeField(
+        _('Created at'),
+        help_text=_("Date that the object is created."),
+        auto_now_add=True
+    )
+
+    # Create or update the date after the discipline is updated
+    updated_at = models.DateTimeField(
+        _('Updated at'),
+        help_text=_("Date that the object is updated."),
+        auto_now=True
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Tag(BaseModel):
     """
     Tags for improve system functionalities.
     """
 
-    title = models.CharField(
-        _('Tag'),
-        max_length=20
-    )
+    title = models.CharField(_('Tag'), max_length=20)
 
     def __str__(self):
         """
@@ -23,7 +43,7 @@ class Tag(models.Model):
         db_table = "tags"
 
 
-class News(models.Model):
+class News(BaseModel):
     """
     Informations about the software.
     """
@@ -42,12 +62,6 @@ class News(models.Model):
         null=True
     )
 
-    created_at = models.DateTimeField(
-        _('Created at'),
-        help_text=_('Date of creation of information'),
-        auto_now_add=True
-    )
-
     link = models.URLField(
         _('Link of information'),
         blank=True,
@@ -58,8 +72,7 @@ class News(models.Model):
 
     tags = models.ManyToManyField(
         Tag,
-        related_name='tags',
-        related_query_name='news',
+        related_name='news',
         blank=True
     )
 

@@ -1,9 +1,5 @@
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
-from .serializers import NewsCreateTagsSerializer, TagSerializer, NewsUpdateSerializer, NewsExistsTagsCreateSerializer
+from .serializers import NewsTagsSerializer, TagSerializer
 from .models import News, Tag
 from .permissions import CreateUpdateDestroyAdminPermission
 
@@ -17,34 +13,8 @@ class NewsViewSet(ModelViewSet):
     """
 
     queryset = News.objects.all()
+    serializer_class = NewsTagsSerializer
     permission_classes = (CreateUpdateDestroyAdminPermission,)
-
-    def get_serializer_class(self):
-        """
-        Return a serializer class based on action
-        """
-
-        if self.action == 'exists_tags':
-            return NewsExistsTagsCreateSerializer
-
-        if self.action == 'list' or self.action == 'create':
-            return NewsCreateTagsSerializer
-
-        return NewsUpdateSerializer
-
-    @action(methods=['post'], detail=False, url_path="exists-tags")
-    def exists_tags(self, request):
-        """
-        Get existing tags to create a news
-        """
-
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            headers = self.get_success_headers(serializer.data)
-            serializer.create(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TagsViewSet(ModelViewSet):
@@ -57,4 +27,4 @@ class TagsViewSet(ModelViewSet):
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [CreateUpdateDestroyAdminPermission]
+    permission_classes = (CreateUpdateDestroyAdminPermission,)

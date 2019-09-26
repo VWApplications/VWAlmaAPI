@@ -1,11 +1,8 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
-from django.core import validators
 from django.db import models
-
-# Python modules
-import re
+from core.models import BaseModel
 
 # Get the custom user from settings
 User = get_user_model()
@@ -30,7 +27,7 @@ class DisciplineManager(models.Manager):
         )
 
 
-class Discipline(models.Model):
+class Discipline(BaseModel):
     """
     Class that manages the disciplines part of TBL.
     """
@@ -44,13 +41,15 @@ class Discipline(models.Model):
     institution = models.CharField(
         _('Institution'),
         help_text=_("University or School in which the user is inserted."),
-        max_length=100
+        max_length=100,
+        blank=True
     )
 
     course = models.CharField(
         _("Course"),
         max_length=100,
-        help_text=_("Course that is ministered the discipline")
+        help_text=_("Course that is ministered the discipline"),
+        blank=True
     )
 
     description = models.TextField(
@@ -58,17 +57,10 @@ class Discipline(models.Model):
         help_text=_("Description of discipline")
     )
 
-    classroom_validator = validators.RegexValidator(
-        re.compile('^Class|^Turma [A-Z]$'),
-        _("Enter a valid classroom, the classroom need to be 'Class A-Z'")
-    )
-
     classroom = models.CharField(
         _('Classroom'),
         max_length=10,
-        default="Class A",
         help_text=_("Classroom title of discipline."),
-        validators=[classroom_validator]
     )
 
     password = models.CharField(
@@ -120,8 +112,7 @@ class Discipline(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name=_("Teacher"),
-        related_name="disciplines",
-        related_query_name="discipline"
+        related_name="disciplines"
     )
 
     # Class students
@@ -138,20 +129,6 @@ class Discipline(models.Model):
         verbose_name='Monitors',
         related_name='monitor_classes',
         blank=True
-    )
-
-    # Create a date when the discipline is created
-    created_at = models.DateTimeField(
-        _('Created at'),
-        help_text=_("Date that the discipline is created."),
-        auto_now_add=True
-    )
-
-    # Create or update the date after the discipline is updated
-    updated_at = models.DateTimeField(
-        _('Updated at'),
-        help_text=_("Date that the discipline is updated."),
-        auto_now=True
     )
 
     # Insert new queryset into the model
