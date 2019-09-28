@@ -24,7 +24,7 @@ class DisciplineSerializer(ModelSerializer):
 
     teacher = UserDisciplineSerializer(read_only=True)
 
-    password = CharField(write_only=True)
+    password = CharField(write_only=True, required=False)
 
     class Meta:
         model = Discipline
@@ -53,6 +53,7 @@ class DisciplineSerializer(ModelSerializer):
 
         try:
             teacher = User.objects.get(id=self.current_user())
+            logging.info("Professor: " + str(teacher))
         except User.DoesNotExist as error:
             logging.error(error)
             raise ValidationError(_('Authenticated teacher not found.'))
@@ -63,5 +64,7 @@ class DisciplineSerializer(ModelSerializer):
         )
 
         discipline.save()
+
+        logging.info("Disciplina criada com sucesso!")
 
         return discipline

@@ -51,6 +51,8 @@ class UserSerializer(ModelSerializer):
 
         instance.save()
 
+        logging.info("Usuário atualizado com sucesso!")
+
         return instance
 
 
@@ -100,6 +102,8 @@ class UserPasswordSerializer(ModelSerializer):
         instance.set_password(new_password)
 
         instance.save()
+
+        logging.info("Senha atualizada com sucesso!")
 
         return instance
 
@@ -174,5 +178,7 @@ class UserRegisterSerializer(ModelSerializer):
         user.set_password(validated_data['password'])
 
         user.save()
+
+        logging.info("Usuário criado com sucesso!")
 
         return user

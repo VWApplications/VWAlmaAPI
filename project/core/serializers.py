@@ -60,6 +60,8 @@ class NewsTagsSerializer(ModelSerializer):
 
         logging.info(news)
 
+        logging.info("Notícia criada com sucesso!")
+
         return news
 
     def update(self, instance, validated_data):
@@ -88,5 +90,7 @@ class NewsTagsSerializer(ModelSerializer):
             instance.image = validated_data['image']
 
         instance.save()
+
+        logging.info("Notícia atualizada com sucesso!")
 
         return instance
