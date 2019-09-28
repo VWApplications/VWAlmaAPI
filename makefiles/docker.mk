@@ -1,38 +1,38 @@
 # DOCKER DEPLOY ------------------------------------------------
 up:
-	# Create and start containers
+	# Cria e inicia os containers
 	docker-compose up
 
 build:
-	# Rebuild the docker compose
+	# Reconstroi os containers
 	docker-compose up --build
 
 restart:
-	# Restart services
+	# Da um restart no servidor
 	docker-compose restart
 
 logs:
-	# View output from containers
+	# Visualiza os logs
 	docker-compose logs -f -t
 
 start:
-	# Start services
+	# Inicia um container parado
 	docker-compose start
 
 stop:
-	# Stop services
+	# Para um container rodando
 	docker-compose stop
 
 ps:
-	# List all running containers
+	# Lista todos os containers rodando
 	docker-compose ps
 
 ps_all:
-	# List all containers
+	# Lista todos os containers
 	docker ps -a
 
 down:
-	# Stop and Remove all containers
+	# Para e remove todos os containers
 	docker-compose down
 
 help:
@@ -40,11 +40,11 @@ help:
 	docker-compose help
 
 images:
-	# List images
+	# Lista todas as imagens
 	docker images
 
 container := "alma"
 
 exec:
-	# Get in the bash of container
+	# Entra no terminal do container
 	docker-compose exec ${container} bash

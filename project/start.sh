@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# Purpose: Config production enviroment
+# Propósito: Configura o ambiente de produção
 #
 # Author: Victor Arnaud <victorhad@gmail.com>
 
-# Waiting the PostgreSQL initialize
+# Espera o POSTGRESQL inicializar
 postgres_ready() {
 python3 << END
 import sys

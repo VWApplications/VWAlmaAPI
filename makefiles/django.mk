@@ -1,31 +1,31 @@
 # DATABASE -----------------------------------------------------
 
 migrations:
-	# Create all migrations from models
+	# Cria todas as migrações
 	docker-compose exec alma python3 manage.py makemigrations
 
 migrate:
-	# Migrate all migrations on database
+	# Rodas as migrações no banco de dados
 	docker-compose exec alma python3 manage.py migrate
 
 shell:
-	# Run django shell
+	# Roda o shell do django
 	docker-compose exec alma python3 manage.py shell
 
 superuser:
-	# Create a super user on system.
+	# Cria um superusuário
 	docker-compose exec alma python3 manage.py createsuperuser
 
 install:
-	# Install some dependecy
+	# Instala uma nova dependência
 	docker-compose exec alma pip3 install ${package}
 
 requirements:
-	# Verify all requirements
+	# Verifica todas as dependências
 	docker-compose exec alma pip3 freeze
 
 flake8:
-	# Run flake8
+	# Roda o flake8
 	docker-compose exec alma flake8
 
 # POPULATE DB --------------------------------------------------
@@ -33,11 +33,11 @@ flake8:
 json_file := database.json
 
 fixture:
-	# Create files with data
+	# Cria um arquivo json com os dados do banco.
 	docker-compose exec alma python3 manage.py dumpdata ${model} --indent 4 > ${json_file}
 
 populate:
-	# Populate database with specific model
+	# Popula o banco de dados com esse arquivo json gerado.
 	docker-compose exec alma python3 manage.py loaddata project/**/fixtures/**.json
 
 
@@ -65,5 +65,5 @@ restore:
 path := .
 
 test:
-	# Run all tests
+	# Roda todos os testes
 	docker-compose exec alma python3 manage.py test ${path} --keepdb

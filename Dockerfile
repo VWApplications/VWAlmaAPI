@@ -1,30 +1,30 @@
-# Build an debian image
+# Baixa a imagem do debian com o python:3.6
 FROM python:3.6
 
 # Remove o delay do log
 ENV PYTHONUNBUFFERED 1
 
-# Install SO dependecies
+# Instala as dependências do sistema operacional
 RUN apt-get update && apt-get install -y vim && pip3 install --upgrade pip
 
-# Create project folder
+# Cria a pasta do projeto
 RUN mkdir /software
 
-# Make /software main directory
+# Faz a pasta /software ser a diretorio atual
 WORKDIR /software
 
-# Add requirements into /software folder
+# Adiciona os arquivo requirements.txt na pasta /software
 ADD ./project/requirements.txt /software
 
-# Install dependencies
+# Instala as dependências do software.
 RUN pip3 install -r requirements.txt
 
-# Insert everything into /software
+# Insere todo o projeto dentro da pasta software
 ADD ./project/ /software
 
-# Expose the port 8000
+# Expoẽ a porta 8000
 EXPOSE 8000
 
-# Run the production script before and after any command
+# Roda o script de produção
 RUN chmod +x ./start.sh
 ENTRYPOINT ["./start.sh"]

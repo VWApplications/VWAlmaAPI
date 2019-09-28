@@ -1,14 +1,14 @@
-# File Name: Makefile
-# Purpose  : Symplify project commands
-# Author   : Victor Arnaud
-# Date     : 05/08/2019
+# Nome do arquivo: Makefile
+# Propósito  	 : Simplifica e agiliza o desenvolvimento
+# Autor   		 : Victor Arnaud
+# Data     		 : 05/08/2019
 
-# Execute some targets in django.mk file with command $ make
+# Ao executar o comando "make" executa make migrations e make migrate ao mesmo tempo
 all: migrations migrate
 
-# Phone target are used when target not be a file
-# If we have a file with same name of target, the
-# command will run the same way.
+# Phone target é usado quando o target não é um arquivo
+# Se você tiver um arquivo com o mesmo nome do target, o
+# comando irá rodar da mesma forma.
 .PHONE: all
 
 # DJANGO
