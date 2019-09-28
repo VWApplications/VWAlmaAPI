@@ -11,7 +11,7 @@ User = get_user_model()
 
 class UserSerializer(ModelSerializer):
     """
-    A serializer for our user profile objects.
+    O serializado para pegar os dados do usuário
     """
 
     short_name = SerializerMethodField()
@@ -27,14 +27,14 @@ class UserSerializer(ModelSerializer):
 
     def get_short_name(self, obj):
         """
-        Get the short name of user.
+        Pega o nome curto do usuário.
         """
 
         return obj.short_name
 
     def update(self, instance, validated_data):
         """
-        Update the user password.
+        Atualiza os dados do usuário
         """
 
         logging.info("Instancia para atualização: " + str(instance))
@@ -56,7 +56,7 @@ class UserSerializer(ModelSerializer):
 
 class UserPasswordSerializer(ModelSerializer):
     """
-    A serializer to edit user password.
+    O serializador para atualizar a senha do usuário.
     """
 
     password = CharField(write_only=True, style={'input_type': 'password'})
@@ -71,7 +71,7 @@ class UserPasswordSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         """
-        Update the user password.
+        Atualiza a senha do usuário.
         """
 
         logging.info("Instancia para atualização: " + str(instance))
@@ -107,7 +107,7 @@ class UserPasswordSerializer(ModelSerializer):
 
 class UserRegisterSerializer(ModelSerializer):
     """
-    A serializer to register a new user.
+    O serializer para registrar um novo usuário
     """
 
     password = CharField(write_only=True, style={'input_type': 'password'})
@@ -126,8 +126,8 @@ class UserRegisterSerializer(ModelSerializer):
 
     def validate(self, data):
         """
-        Validate if existis another user with same email address and verify
-        if the password not match.
+        Valide se existe outro usuário com o mesmo endereço de email
+        e verifique se a senha não corresponde.
         """
 
         logging.info("Validando os dados para criação do usuário.")
@@ -158,7 +158,7 @@ class UserRegisterSerializer(ModelSerializer):
 
     def create(self, validated_data):
         """
-        Create and return a new user.
+        Cria e retorna um novo usuário
         """
 
         logging.info("Dados para criação do usuário: " + str(validated_data))

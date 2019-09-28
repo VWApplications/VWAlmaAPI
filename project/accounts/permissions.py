@@ -9,10 +9,6 @@ class UpdateOwnProfile(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        """
-        Permissão de edição.
-        """
-
         if is_read_mode(request):
             logging.info("Permitido: Modo leitura.")
             return True
@@ -25,7 +21,7 @@ class UpdateOwnProfile(BasePermission):
             logging.info("Permitido: Usuário dono do da conta.")
             return True
 
-        logging.info("Permissão Negada.")
+        logging.warning("Permissão Negada.")
 
         return False
 
@@ -37,10 +33,6 @@ class CreateListUserPermission(BasePermission):
     """
 
     def has_permission(self, request, view):
-        """
-        Permissão de criação e listagem.
-        """
-
         if is_read_mode(request) or not is_logged(request):
             logging.info("Permitido: Modo leitura ou o usuário não está logado.")
             return True
@@ -49,7 +41,7 @@ class CreateListUserPermission(BasePermission):
             logging.info("Permitido: Usuário logado e administrador.")
             return True
 
-        logging.info("Permissão Negada.")
+        logging.warning("Permissão Negada.")
 
         return False
 

@@ -4,20 +4,18 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from core.models import BaseModel
 
-# Get the custom user from settings
 User = get_user_model()
 
 
 class DisciplineManager(models.Manager):
     """
-    Create a custom search discipline queryset.
+    Crie um conjunto de consultas personalizado da disciplina.
     """
 
     def available(self, user):
         """
-        Remove from queryset the discipline that teacher is owner,
-        students and monitors that are inside discipline and disciplines
-        that are closed.
+        Remova do conjunto de consultas a disciplina que o professor é proprietário,
+        alunos e monitores que estão dentro da disciplina e disciplinas fechadas.
         """
 
         return self.get_queryset().exclude(
@@ -29,51 +27,51 @@ class DisciplineManager(models.Manager):
 
 class Discipline(BaseModel):
     """
-    Class that manages the disciplines part of TBL.
+    Classe que gerencia as disciplinas da TBL.
     """
 
     title = models.CharField(
-        _("Title"),
+        "Título",
         max_length=100,
-        help_text=_("Title of discipline")
+        help_text="Título da disciplina"
     )
 
     institution = models.CharField(
-        _('Institution'),
-        help_text=_("University or School in which the user is inserted."),
+        'Instituição',
+        help_text="Universidade ou escola em que o usuário está inserido.",
         max_length=100,
         blank=True
     )
 
     course = models.CharField(
-        _("Course"),
+        "Curso",
         max_length=100,
-        help_text=_("Course that is ministered the discipline"),
+        help_text="Curso que é ministrado a disciplina.",
         blank=True
     )
 
     description = models.TextField(
-        _("Description"),
-        help_text=_("Description of discipline")
+        "Descrição",
+        help_text="Ementa da disciplina."
     )
 
     classroom = models.CharField(
-        _('Classroom'),
-        max_length=10,
-        help_text=_("Classroom title of discipline."),
+        'Sala',
+        max_length=20,
+        help_text="Turma da disciplina.",
     )
 
     password = models.CharField(
-        _('Password'),
+        'Senha',
         max_length=30,
-        help_text=_("Password to get into the class."),
+        help_text="Senha para entrar na disciplina.",
         blank=True
     )
 
     students_limit = models.PositiveIntegerField(
-        _('Students limit'),
+        'Limite de estudantes.',
         default=0,
-        help_text=_("Students limit to get in the class."),
+        help_text="Limite de estudantes para entrar na turma.",
         validators=[
             MaxValueValidator(
                 150,
@@ -87,9 +85,9 @@ class Discipline(BaseModel):
     )
 
     monitors_limit = models.PositiveIntegerField(
-        _("Monitors limit"),
+        "Limite de monitores",
         default=0,
-        help_text=_("Monitors limit to insert in the class."),
+        help_text="Limite de monitores para entrar na turma.",
         validators=[
             MaxValueValidator(
                 15,
@@ -103,44 +101,50 @@ class Discipline(BaseModel):
     )
 
     is_closed = models.BooleanField(
-        _("Is closed?"),
+        "Está fechada?",
         default=False,
-        help_text=_("Close discipline.")
+        help_text="Verifica se a disciplina está fechada."
     )
 
     teacher = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name=_("Teacher"),
+        verbose_name="Professor",
         related_name="disciplines"
     )
 
-    # Class students
     students = models.ManyToManyField(
         User,
-        verbose_name='Students',
+        verbose_name='Alunos',
         related_name='student_classes',
         blank=True
     )
 
-    # Class monitors
     monitors = models.ManyToManyField(
         User,
-        verbose_name='Monitors',
+        verbose_name='Monitores',
         related_name='monitor_classes',
         blank=True
     )
 
-    # Insert new queryset into the model
+    # Insere o queryset na modelo.
     objects = DisciplineManager()
+
+    def get_discipline_url(self):
+        """
+        Pega o nome da disciplina formatado para urls.
+        """
+
+        title = self.title.replace(" ", "-").lower()
+
+        return '{1}-{2}'.format(self.id, title)
 
     def __str__(self):
         """
-        Returns the object as a string, the attribute that will represent
-        the object.
+        Objeto em forma de string.
         """
 
-        return '{0}: {1} - {2}'.format(self.course, self.title, self.classroom)
+        return self.get_discipline_url()
 
     class Meta:
         db_table = "disciplines"

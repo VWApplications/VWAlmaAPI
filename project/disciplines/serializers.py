@@ -1,16 +1,15 @@
-from rest_framework.serializers import (
-    ModelSerializer, CharField
-)
+from rest_framework.serializers import ModelSerializer, CharField, ValidationError
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from .models import Discipline
+import logging
 
-# Get the custom user from settings
 User = get_user_model()
 
 
 class UserDisciplineSerializer(ModelSerializer):
     """
-    Serializer to show teacher into discipline serializer
+    Serializado de dados do professor da disciplina.
     """
 
     class Meta:
@@ -20,7 +19,7 @@ class UserDisciplineSerializer(ModelSerializer):
 
 class DisciplineSerializer(ModelSerializer):
     """
-    A serializer to list and register a new discipline.
+    Serializador para disciplinas.
     """
 
     teacher = UserDisciplineSerializer(read_only=True)
@@ -38,18 +37,25 @@ class DisciplineSerializer(ModelSerializer):
 
     def current_user(self):
         """
-        Method to get the current teacher logged.
+        Pega o usuário logado.
         """
 
         teacher = self.context['request'].user.id
+
         return teacher
 
     def create(self, validated_data):
         """
-        Create and return a new discipline
+        Cria e retorna uma nova disciplina
         """
 
-        teacher = User.objects.get(id=self.current_user())
+        logging.info("Dados para criação da disciplina: " + str(validated_data))
+
+        try:
+            teacher = User.objects.get(id=self.current_user())
+        except User.DoesNotExist as error:
+            logging.error(error)
+            raise ValidationError(_('Authenticated teacher not found.'))
 
         discipline = Discipline.objects.create(
             **validated_data,

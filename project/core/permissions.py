@@ -4,15 +4,11 @@ import logging
 
 class CreateUpdateDestroyAdminPermission(BasePermission):
     """
-    Permissão de edição, criação e remoção de notícias.
+    Só permite realizar essas operações se o usuário tiver logado
+    no sistema e for administrador.
     """
 
     def has_permission(self, request, view):
-        """
-        Só permite realizar essas operações se o usuário
-        tiver logado no sistema e for administrador.
-        """
-
         if is_read_mode(request):
             logging.info("Permitido: Modo leitura.")
             return True
@@ -21,7 +17,7 @@ class CreateUpdateDestroyAdminPermission(BasePermission):
             logging.info("Permitido: Usuário administrador logado.")
             return True
 
-        logging.info("Permissão Negada.")
+        logging.warning("Permissão Negada.")
 
         return False
 
