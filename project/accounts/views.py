@@ -81,7 +81,7 @@ class UserViewSet(ModelViewSet):
         return [permission() for permission in permission_classes]
 
     @action(detail=False, methods=['get'], url_path="current_user", url_name="current-user")
-    def current_user(self, request, pk=None):
+    def current_user(self, request):
         """
         Pega o usuário autenticado.
         """
@@ -91,18 +91,19 @@ class UserViewSet(ModelViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['put'], url_path="change_password", url_name="change-password")
-    def set_password(self, request, pk=None):
+    @action(detail=False, methods=['put', 'patch'], url_path="change_password", url_name="change-password")
+    def set_password(self, request):
         """
         Controlador que permite que um usuário conectado edite sua própria senha.
         """
 
-        user = self.get_object()
-        logging.info("Atualizando senha do usuário: " + str(user))
+        logging.info("Atualizando senha do usuário")
 
-        serializer = self.get_serializer(user, data=request.data, partial=False)
+        logging.info("Usuário: " + str(request.user))
+
+        serializer = self.get_serializer(request.user, data=request.data, partial=False)
         if serializer.is_valid():
-            serializer.update(user, request.data)
-            return Response({'status': 'password set'}, status=status.HTTP_200_OK)
+            serializer.update(request.user, request.data)
+            return Response({'success': True}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

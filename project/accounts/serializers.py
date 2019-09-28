@@ -75,7 +75,6 @@ class UserPasswordSerializer(ModelSerializer):
         """
 
         logging.info("Instancia para atualização: " + str(instance))
-        logging.info("Dados para atualização: " + str(validated_data))
 
         if "password" not in validated_data.keys():
             raise ValidationError(_('Old password is required.'))
