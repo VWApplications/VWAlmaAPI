@@ -5,7 +5,7 @@ import logging
 
 class TagSerializer(ModelSerializer):
     """
-    A serializer for our tags objects.
+    Um serializador para nossos objetos de tags.
     """
 
     class Meta:
@@ -15,10 +15,10 @@ class TagSerializer(ModelSerializer):
 
 class NewsTagsSerializer(ModelSerializer):
     """
-    Create news with new tags
+    Serializado para criar notícias com novas tags
     """
 
-    tags = TagSerializer(many=True)
+    tags = TagSerializer(many=True, required=False)
     created_at = SerializerMethodField()
 
     class Meta:
@@ -27,14 +27,14 @@ class NewsTagsSerializer(ModelSerializer):
 
     def get_created_at(self, obj):
         """
-        Get the created_at formated
+        Pega a data de criação da notícia formatada.
         """
 
         return obj.format_datetime(obj.created_at)
 
     def create_tags(self, tags, news):
         """
-        Create tags
+        Cria a tag.
         """
 
         logging.info("Tags: " + str(tags))
@@ -45,7 +45,7 @@ class NewsTagsSerializer(ModelSerializer):
 
     def create(self, validated_data):
         """
-        Create news with tags
+        Cria a notícia.
         """
 
         logging.info("Criando uma notícia.")
@@ -64,7 +64,7 @@ class NewsTagsSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         """
-        Update the user password.
+        Atualiza a notícia.
         """
 
         logging.info("Atualizando a notícia " + str(instance.title))

@@ -3,7 +3,6 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from accounts.models import User
 from core.models import News
-from core.serializers import NewsCreateTagsSerializer
 
 
 class ReadNewsTestCase(APITestCase):
@@ -57,9 +56,7 @@ class ReadNewsTestCase(APITestCase):
         """
 
         url = reverse('new-detail', kwargs={'pk': self.news.pk})
-        serializer = NewsCreateTagsSerializer(self.news)
         response = self.client.get(url)
-        self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_invalid_url_news_detail(self):

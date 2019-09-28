@@ -33,7 +33,8 @@ class UpdateNewsTestCase(APITestCase):
         self.data = {
             'title': 'Título',
             'description': 'Description',
-            'link': 'http://www.google.com'
+            'link': 'http://www.google.com',
+            'tags': []
         }
         self.url = reverse('new-detail', kwargs={'pk': self.news.pk})
 
@@ -55,7 +56,6 @@ class UpdateNewsTestCase(APITestCase):
         self.client.force_authenticate(self.superuser)
         self.data['title'] = "News 1"
         response = self.client.put(self.url, self.data)
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_invalid_update_news(self):

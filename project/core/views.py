@@ -3,6 +3,7 @@ from rest_framework.pagination import PageNumberPagination
 from .serializers import NewsTagsSerializer, TagSerializer
 from .models import News, Tag
 from .permissions import CreateUpdateDestroyAdminPermission
+import logging
 
 
 class CustomPagination(PageNumberPagination):
@@ -17,10 +18,7 @@ class CustomPagination(PageNumberPagination):
 
 class NewsViewSet(ModelViewSet):
     """
-    View set to news
-
-    A viewset that provides default `create()`, `retrieve()`, `update()`,
-    `partial_update()`, `destroy()` and `list()` actions.
+    Views de notícias.
     """
 
     serializer_class = NewsTagsSerializer
@@ -29,29 +27,32 @@ class NewsViewSet(ModelViewSet):
 
     def get_queryset(self):
         """
-        Make a filter if passed, otherwise return all news.
+        Faça um filtro, se aprovado, retorne todas as notícias fitradas.
         """
+
+        logging.info("Buscando notícias.")
 
         queryset = News.objects.all()
 
         search = self.request.query_params.get('search', None)
         tag = self.request.query_params.get('tag', None)
 
+        logging.info("Filtros: " + str({"search": search, "tag": tag}))
+
         if search:
             queryset = queryset.filter(title__icontains=search)
+            logging.info("Notícias filtradas pela pesquisa: " + str(queryset))
 
         if tag:
             queryset = queryset.filter(tags__title__icontains=tag)
+            logging.info("Notícias filtradas pela tag: " + str(queryset))
 
         return queryset
 
 
 class TagsViewSet(ModelViewSet):
     """
-    View set to tags.
-
-    A viewset that provides default `create()`, `retrieve()`, `update()`,
-    `partial_update()`, `destroy()` and `list()` actions.
+    Views de Tags
     """
 
     queryset = Tag.objects.all()

@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 
@@ -8,23 +7,21 @@ class BaseModel(models.Model):
     Atributos básico de todas as modelos.
     """
 
-    # Create a date when the discipline is created
     created_at = models.DateTimeField(
-        _('Created at'),
-        help_text=_("Date that the object is created."),
+        'Criado em',
+        help_text="Data na qual o objeto foi criado.",
         auto_now_add=True
     )
 
-    # Create or update the date after the discipline is updated
     updated_at = models.DateTimeField(
-        _('Updated at'),
-        help_text=_("Date that the object is updated."),
+        'Atualizado em',
+        help_text="Data na qual o objeto foi atualizado.",
         auto_now=True
     )
 
     def format_datetime(self, datetime, date_format="%d/%m/%Y %H:%M:%S"):
         """
-        Get created at attribute formated
+        Pega a data formatada.
         """
 
         local_datetime = timezone.localtime(datetime)
@@ -37,14 +34,14 @@ class BaseModel(models.Model):
 
 class Tag(BaseModel):
     """
-    Tags for improve system functionalities.
+    Modelo de labels
     """
 
-    title = models.CharField(_('Tag'), max_length=20)
+    title = models.CharField('Tag', max_length=20)
 
     def __str__(self):
         """
-        String format of object.
+        Objeto no formato string.
         """
 
         return self.title
@@ -55,30 +52,29 @@ class Tag(BaseModel):
 
 class News(BaseModel):
     """
-    Informations about the software.
+    Modelo de notícias sobre o software.
     """
 
     title = models.CharField(
-        _('Title'),
-        help_text=_("Title of information."),
+        'Título',
+        help_text="Título da notícia",
         max_length=100
     )
 
     image = models.ImageField(
         upload_to='news',
-        help_text=_('Image about information.'),
-        verbose_name=_('Image'),
+        help_text='Imagem da notícia.',
         blank=True,
         null=True
     )
 
     link = models.URLField(
-        _('Link of information'),
+        'Link da notícia',
         blank=True,
         null=True
     )
 
-    description = models.TextField(_('Description'))
+    description = models.TextField('Descrição')
 
     tags = models.ManyToManyField(
         Tag,
@@ -88,7 +84,7 @@ class News(BaseModel):
 
     def __str__(self):
         """
-        String format of object.
+        Objeto no formato string.
         """
 
         return self.title
