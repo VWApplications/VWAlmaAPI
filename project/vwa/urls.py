@@ -11,9 +11,6 @@ urlpatterns = [
     path('disciplines/', include('disciplines.urls'))
 ]
 
-# While in development mode we will use relative URL for static and average
-# files. In production mode we will no longer need this folder as we will store
-# everything on a server
 if settings.DEBUG:
     urlpatterns += static(
         settings.STATIC_URL,

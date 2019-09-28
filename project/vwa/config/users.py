@@ -1,4 +1,4 @@
-# Custom user profile
-# Tell Django to use our custom user model
-# instead of its built in default user model.
+# Perfil de usuário personalizado
+# Diga ao Django para usar nosso modelo de usuário personalizado
+# em vez de seu modelo de usuário padrão embutido.
 AUTH_USER_MODEL = 'accounts.User'

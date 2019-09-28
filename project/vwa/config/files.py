@@ -1,7 +1,6 @@
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-# /software/vwa/config/files.py
+# Crie caminhos dentro do projeto como este: /software/vwa/config/files.py
 BASE_DIR = os.path.dirname(
     os.path.dirname(
         os.path.dirname(
@@ -10,19 +9,18 @@ BASE_DIR = os.path.dirname(
     )
 )
 
-# Absolute path to the directory static files should be collected to.
-# Example: "/var/www/example.com/static/"
+# O caminho absoluto para os arquivos estáticos coletados
+# Ex: "/var/www/example.com/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# URL prefix for static files.
-# Example: "http://example.com/static/", "http://static.example.com/"
+# Prefixo da URL para arquivos estáticos
+# Ex: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/var/www/example.com/media/"
+# O caminho absoluto para os arquivos dinâmicos coletados
+# Ex: "/var/www/example.com/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
-# Examples: "http://example.com/media/", "http://media.example.com/"
+# Prefixo da URL para arquivos dinâmicos
+# Ex: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = '/media/'

@@ -1,9 +1,9 @@
 """
-WSGI config for vwa_accounts project.
+Configuração WSGI para o projeto alma.
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+Ele expõe o WSGI que pode ser chamado como uma variável no nível do módulo chamada `` application``.
 
-For more information on this file, see
+Para mais informações, veja:
 https://docs.djangoproject.com/en/2.1/howto/deployment/wsgi/
 """
 

@@ -1,5 +1,4 @@
-# Password validation
-# They are validators of passwords to create strong password in the system
+# Eles são validadores de senhas para criar senhas fortes no sistema
 password_validation = 'django.contrib.auth.password_validation'
 
 AUTH_PASSWORD_VALIDATORS = [

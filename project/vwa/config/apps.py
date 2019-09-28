@@ -1,8 +1,3 @@
-"""
-File to enter application dependencies in development and
-production environments
-"""
-
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
