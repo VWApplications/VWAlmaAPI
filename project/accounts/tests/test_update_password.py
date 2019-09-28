@@ -75,7 +75,7 @@ class UpdateUserPasswordTestCase(APITestCase):
         """
 
         data = {
-            'password': self.user.password,
+            'password': 'pedro123456',
             'new_password': 'pedro12345678',
             'confirm_password': 'pedro123456789'
         }

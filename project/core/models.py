@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from datetime import datetime
+
 
 class BaseModel(models.Model):
     """

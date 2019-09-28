@@ -7,50 +7,46 @@ from django.contrib.auth.models import (
 
 class UserProfileManager(BaseUserManager):
     """
-    Object manager is another class that we can use to help manage the user
-    profiles that will give us some extra functionality like creating an
-    administrator user or creating a regular user.
+    O gerenciador de objetos é outra classe que podemos usar para ajudar a gerenciar
+    os perfis de usuário que nos fornecerão algumas funcionalidades extras, como a
+    criação de um usuário administrador ou a criação de um usuário comum.
     """
 
     def create_user(self, email, name, password=None):
         """
-        Creates a new user profile objects.
+        Cria um usuário comum.
         """
 
         if not email:
             raise ValueError(_("Users must have an email address."))
 
-        # This will convert the email to lowercase.
-        # Email will be standardized in the system.
+        # Transforma o email e caixa baixa e será padronizado
         email = self.normalize_email(email)
 
-        # Create a new user in the system.
         user = self.model(
             email=email,
             name=name
         )
 
-        # Set the encrypt password of user
+        # Criptografa a senha.
         user.set_password(password)
 
-        # Save the created user on database
         user.save(using=self._db)
 
         return user
 
     def create_superuser(self, email, name, password):
         """
-        Create and saves a new superuser with given details.
+        Cria um super usuário.
         """
 
         user = self.create_user(email, name, password)
 
-        # Inserts superuser privileges for the user
+        # Insere previlégios de superuser
         user.is_superuser = True
         user.is_staff = True
         user.is_teacher = True
 
-        # Save the created superuser on database
         user.save(using=self._db)
 
         return user
@@ -58,84 +54,80 @@ class UserProfileManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """
-    Create the base of django standart user profile and allows us to
-    add permission to our user model.
+    Crie a base do perfil de usuário padrão do django e nos permita
+    adicionar permissão ao nosso modelo de usuário.
     """
 
     email = models.EmailField(
-        _('E-mail'),
-        help_text=_("Email that will be used as username."),
+        'email',
+        help_text="E-mail que será usado como nome de usuário.",
         unique=True
     )
 
     name = models.CharField(
-        _('Name'),
-        help_text=_("Full user name."),
+        'Nome',
+        help_text="Nome completo do usuário.",
         max_length=150
     )
 
     photo = models.ImageField(
         upload_to='accounts',
-        help_text=_("Photo of user."),
-        verbose_name=_('Photo'),
+        help_text="Foto do usuário",
         blank=True,
         null=True
     )
 
     is_teacher = models.BooleanField(
-        _('Is Teacher?'),
-        help_text=_("Verify if the user is teacher or student"),
+        'É professor?',
+        help_text="Verifique se o usuário é professor ou aluno.",
         default=False
     )
 
-    # Use to determine if this user is currently active in the system
-    # You can use it to disable user accounts
+    # Ao inves de deletar usuários, você pode desativa-los.
     is_active = models.BooleanField(
-        _('Is Active?'),
-        help_text=_("Verify if the user is active."),
+        'Está ativo?',
+        help_text="Verifique se o usuário está ativo no sistema.",
         default=True
     )
 
-    # Transform the user to staff members that can manage de users
     is_staff = models.BooleanField(
-        _('Is Staff?'),
-        help_text=_("Verify if the user is a staff."),
+        'É administrador?',
+        help_text="Transforma o usuário em um superuser.",
         default=False
     )
 
     last_login = models.DateTimeField(
-        _('Last Login'),
-        help_text=_("Last moment the user logged in."),
+        'Última vez logado',
+        help_text="Último momento em que o usuário efetuou login.",
         blank=True,
         null=True
     )
 
     created_at = models.DateTimeField(
-        _('Created at'),
-        help_text=_("Date that the user is created."),
+        'Criado em',
+        help_text="Data em que o usuário é criado.",
         auto_now_add=True
     )
 
     updated_at = models.DateTimeField(
-        _('Updated at'),
-        help_text=_("Date that the user is updated."),
+        'Atualizado em',
+        help_text="Data em que o usuário foi atualizado.",
         auto_now=True
     )
 
-    # Help manager the user profile
+    # Gerenciador de querysets
     objects = UserProfileManager()
 
-    # Is the field that going to be used as the username for this user
+    # O campo que será usado para autenticação
     USERNAME_FIELD = 'email'
 
-    # Is a list of fields that are required for all users, the username don't
-    # need to be passed.
+    # É uma lista de campos necessários para todos os usuários,
+    # o USERNAME_FIELD não precisa ser passado.
     REQUIRED_FIELDS = ['name']
 
     def __str__(self):
         """
-        Returns the object as a string, the attribute that will represent
-        the object.
+        Retorno o objeto em formato de string.
         """
 
         return self.email
@@ -143,7 +135,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def full_name(self):
         """
-        Used to get the user full name.
+        Pega o nome completo do usuário.
         """
 
         return self.name
@@ -151,8 +143,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def short_name(self):
         """
-        Used to get the user short name.
+        Pega o primeiro e último nome do usuário.
         """
+
         LAST_NAME = -1
         FIRST_NAME = 0
 
@@ -167,7 +160,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         """
-        Some information about user class.
+        Algumas informações adicionais.
         """
 
         db_table = "accounts"

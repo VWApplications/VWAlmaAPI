@@ -4,8 +4,8 @@ from rest_framework.serializers import (
     SerializerMethodField
 )
 from django.contrib.auth import get_user_model
+import logging
 
-# Get the custom user from settings
 User = get_user_model()
 
 
@@ -37,8 +37,14 @@ class UserSerializer(ModelSerializer):
         Update the user password.
         """
 
-        instance.email = validated_data['email']
-        instance.name = validated_data['name']
+        logging.info("Instancia para atualização: " + str(instance))
+        logging.info("Dados para atualização: " + str(validated_data))
+
+        if "email" in validated_data.keys():
+            instance.email = validated_data['email']
+
+        if "name" in validated_data.keys():
+            instance.name = validated_data['name']
 
         if 'photo' in validated_data.keys():
             instance.photo = validated_data['photo']
@@ -55,15 +61,9 @@ class UserPasswordSerializer(ModelSerializer):
 
     password = CharField(write_only=True, style={'input_type': 'password'})
 
-    new_password = CharField(
-        write_only=True,
-        style={'input_type': 'password'}
-    )
+    new_password = CharField(write_only=True, style={'input_type': 'password'})
 
-    confirm_password = CharField(
-        write_only=True,
-        style={'input_type': 'password'}
-    )
+    confirm_password = CharField(write_only=True, style={'input_type': 'password'})
 
     class Meta:
         model = User
@@ -74,17 +74,29 @@ class UserPasswordSerializer(ModelSerializer):
         Update the user password.
         """
 
+        logging.info("Instancia para atualização: " + str(instance))
+        logging.info("Dados para atualização: " + str(validated_data))
+
+        if "password" not in validated_data.keys():
+            raise ValidationError(_('Old password is required.'))
+
+        if "new_password" not in validated_data.keys():
+            raise ValidationError(_('New password is required.'))
+
+        if "confirm_password" not in validated_data.keys():
+            raise ValidationError(_('Password confirmation is required.'))
+
         password = validated_data['password']
         new_password = validated_data['new_password']
         confirm_password = validated_data['confirm_password']
 
-        # Verify if new password and confirm password match.
-        if new_password != confirm_password:
-            raise ValidationError(_('The new passwords do not match.'))
-
-        # Verify if the old password is correct.
+        # Verifique se a senha antiga está correta.
         if not instance.check_password(password):
             raise ValidationError(_('Old password invalid.'))
+
+        # Verifica se ambas as senhas coincidem.
+        if new_password != confirm_password:
+            raise ValidationError(_('The new passwords do not match.'))
 
         instance.set_password(new_password)
 
@@ -98,19 +110,11 @@ class UserRegisterSerializer(ModelSerializer):
     A serializer to register a new user.
     """
 
-    password = CharField(
-        write_only=True,
-        style={'input_type': 'password'}
-    )
+    password = CharField(write_only=True, style={'input_type': 'password'})
 
-    confirm_password = CharField(
-        write_only=True,
-        style={'input_type': 'password'}
-    )
+    confirm_password = CharField(write_only=True, style={'input_type': 'password'})
 
-    last_login = DateTimeField(
-        read_only=True
-    )
+    last_login = DateTimeField(read_only=True)
 
     class Meta:
         model = User
@@ -126,16 +130,27 @@ class UserRegisterSerializer(ModelSerializer):
         if the password not match.
         """
 
+        logging.info("Validando os dados para criação do usuário.")
+
+        if "email" not in data.keys():
+            raise ValidationError(_('email is required.'))
+
+        if "password" not in data.keys():
+            raise ValidationError(_('Password is required.'))
+
+        if "confirm_password" not in data.keys():
+            raise ValidationError(_('Password confirmation is required.'))
+
         email = data['email']
         password = data['password']
         confirm_password = data['confirm_password']
 
-        # Verify if exists another user with same email address
+        # Verifique se existe outro usuário com o mesmo endereço de email
         user = User.objects.filter(email=email)
         if user.exists():
             raise ValidationError(_('This user has already registered.'))
 
-        # Verify if the passwords not match.
+        # Verifique se as senhas não coincidem.
         if password != confirm_password:
             raise ValidationError(_('The passwords do not match.'))
 
@@ -146,10 +161,12 @@ class UserRegisterSerializer(ModelSerializer):
         Create and return a new user.
         """
 
+        logging.info("Dados para criação do usuário: " + str(validated_data))
+
         user = User(
             email=validated_data['email'],
             name=validated_data['name'],
-            is_teacher=validated_data['is_teacher']
+            is_teacher=validated_data.get('is_teacher', False)
         )
 
         if 'photo' in validated_data.keys():

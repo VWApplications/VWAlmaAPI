@@ -1,46 +1,62 @@
 from rest_framework.permissions import BasePermission
-from core.permissions import (
-    is_read_mode, is_logged, is_admin
-)
+from core.permissions import is_read_mode, is_logged, is_admin
+import logging
 
 
 class UpdateOwnProfile(BasePermission):
     """
-    Allow users to edit their own profile.
+    Permite os usuário editarem seu próprio perfil.
     """
 
     def has_object_permission(self, request, view, obj):
         """
-        Check user is trying to edit their own profile.
+        Permissão de edição.
         """
 
         if is_read_mode(request):
+            logging.info("Permitido: Modo leitura.")
             return True
 
-        return is_owner(request, obj)
+        if is_admin(request):
+            logging.info("Permitido: Usuário administrador.")
+            return True
+
+        if is_owner(request, obj):
+            logging.info("Permitido: Usuário dono do da conta.")
+            return True
+
+        logging.info("Permissão Negada.")
+
+        return False
 
 
 class CreateListUserPermission(BasePermission):
     """
-    Allow to register on system only if not authenticated
-    or if user is admin.
+    Permite registrar no sistema somente se o usuário não tiver logado
+    ou for um administrador.
     """
 
     def has_permission(self, request, view):
+        """
+        Permissão de criação e listagem.
+        """
 
         if is_read_mode(request) or not is_logged(request):
+            logging.info("Permitido: Modo leitura ou o usuário não está logado.")
             return True
 
         if is_logged(request) and is_admin(request):
+            logging.info("Permitido: Usuário logado e administrador.")
             return True
+
+        logging.info("Permissão Negada.")
 
         return False
 
 
 def is_owner(request, obj):
     """
-    It will check if the object ID that they're trying to update
-    is the authenticated user object, their own object.
+    Verifica se o ID do usuário passado é o ID do usuário logado no sistema.
     """
 
     return obj.id == request.user.id
