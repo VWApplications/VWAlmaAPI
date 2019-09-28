@@ -28,7 +28,7 @@ class UpdateUserPasswordTestCase(APITestCase):
             password='pedro123456'
         )
         self.client.force_authenticate(self.user)
-        self.url = reverse('user-change-password', kwargs={'pk': self.user.pk})
+        self.url = reverse('user-change-password')
 
     def tearDown(self):
         """
@@ -85,33 +85,3 @@ class UpdateUserPasswordTestCase(APITestCase):
             response.data,
             [_('The new passwords do not match.')]
         )
-
-    def test_invalid_update_another_user_password(self):
-        """
-        Can't Update another user password of system.
-        """
-
-        url = reverse('user-change-password', kwargs={'pk': self.superuser.pk})
-        data = UserPasswordSerializer(self.superuser).data
-        data.update({
-            'password': 'victorhad123456',
-            'new_password': 'pedro123456789',
-            'confirm_password': 'pedro123456789'
-        })
-        response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_user_password_not_found(self):
-        """
-        Test to find user password that not exists.
-        """
-
-        url_invalid = reverse('user-change-password', kwargs={'pk': 30})
-        data = UserPasswordSerializer(self.user).data
-        data.update({
-            'password': 'pedro123456',
-            'new_password': 'pedro123456789',
-            'confirm_password': 'pedro123456789'
-        })
-        response = self.client.put(url_invalid, data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
