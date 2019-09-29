@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer, CharField, ValidationError
+from rest_framework.serializers import ModelSerializer, CharField
+from rest_framework.exceptions import ParseError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from .models import Discipline
@@ -56,7 +57,7 @@ class DisciplineSerializer(ModelSerializer):
             logging.info("Professor: " + str(teacher))
         except User.DoesNotExist as error:
             logging.error(error)
-            raise ValidationError(_('Authenticated teacher not found.'))
+            raise ParseError(_('Authenticated teacher not found.'))
 
         discipline = Discipline.objects.create(
             **validated_data,

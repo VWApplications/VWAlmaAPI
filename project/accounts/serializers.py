@@ -1,8 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
-from rest_framework.serializers import (
-    ModelSerializer, CharField, DateTimeField, ValidationError,
-    SerializerMethodField
-)
+from rest_framework.exceptions import ParseError
+from rest_framework.serializers import ModelSerializer, CharField, DateTimeField, SerializerMethodField
 from django.contrib.auth import get_user_model
 import logging
 
@@ -79,13 +77,13 @@ class UserPasswordSerializer(ModelSerializer):
         logging.info("Instancia para atualização: " + str(instance))
 
         if "password" not in validated_data.keys():
-            raise ValidationError(_('Old password is required.'))
+            raise ParseError(_('Old password is required.'))
 
         if "new_password" not in validated_data.keys():
-            raise ValidationError(_('New password is required.'))
+            raise ParseError(_('New password is required.'))
 
         if "confirm_password" not in validated_data.keys():
-            raise ValidationError(_('Password confirmation is required.'))
+            raise ParseError(_('Password confirmation is required.'))
 
         password = validated_data['password']
         new_password = validated_data['new_password']
@@ -93,11 +91,11 @@ class UserPasswordSerializer(ModelSerializer):
 
         # Verifique se a senha antiga está correta.
         if not instance.check_password(password):
-            raise ValidationError(_('Old password invalid.'))
+            raise ParseError(_('Old password invalid.'))
 
         # Verifica se ambas as senhas coincidem.
         if new_password != confirm_password:
-            raise ValidationError(_('The new passwords do not match.'))
+            raise ParseError(_('The new passwords do not match.'))
 
         instance.set_password(new_password)
 
@@ -136,13 +134,13 @@ class UserRegisterSerializer(ModelSerializer):
         logging.info("Validando os dados para criação do usuário.")
 
         if "email" not in data.keys():
-            raise ValidationError(_('email is required.'))
+            raise ParseError(_('email is required.'))
 
         if "password" not in data.keys():
-            raise ValidationError(_('Password is required.'))
+            raise ParseError(_('Password is required.'))
 
         if "confirm_password" not in data.keys():
-            raise ValidationError(_('Password confirmation is required.'))
+            raise ParseError(_('Password confirmation is required.'))
 
         email = data['email']
         password = data['password']
@@ -151,11 +149,11 @@ class UserRegisterSerializer(ModelSerializer):
         # Verifique se existe outro usuário com o mesmo endereço de email
         user = User.objects.filter(email=email)
         if user.exists():
-            raise ValidationError(_('This user has already registered.'))
+            raise ParseError(_('This user has already registered.'))
 
         # Verifique se as senhas não coincidem.
         if password != confirm_password:
-            raise ValidationError(_('The passwords do not match.'))
+            raise ParseError(_('The passwords do not match.'))
 
         return data
 
