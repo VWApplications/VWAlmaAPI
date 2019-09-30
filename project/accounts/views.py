@@ -95,7 +95,7 @@ class UserViewSet(ModelViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['put', 'patch'], url_path="change_password", url_name="change-password")
+    @action(detail=False, methods=['put'], url_path="change_password", url_name="change-password")
     def set_password(self, request):
         """
         Controlador que permite que um usuário conectado edite sua própria senha.
