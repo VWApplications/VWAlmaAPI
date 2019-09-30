@@ -12,23 +12,14 @@ class UserSerializer(ModelSerializer):
     O serializado para pegar os dados do usuário
     """
 
-    short_name = SerializerMethodField()
-
     class Meta:
         model = User
         fields = (
             'id', 'email', 'name', 'short_name',
             'photo', 'is_teacher', 'last_login',
-            'created_at', 'updated_at', 'identifier'
+            'created_at', 'updated_at_formated', 'identifier'
         )
         extra_kwargs = {'is_teacher': {'read_only': True}}
-
-    def get_short_name(self, obj):
-        """
-        Pega o nome curto do usuário.
-        """
-
-        return obj.short_name
 
     def update(self, instance, validated_data):
         """

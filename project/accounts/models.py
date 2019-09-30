@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
@@ -103,13 +104,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=False
     )
 
-    last_login = models.DateTimeField(
-        'Última vez logado',
-        help_text="Último momento em que o usuário efetuou login.",
-        blank=True,
-        null=True
-    )
-
     created_at = models.DateTimeField(
         'Criado em',
         help_text="Data em que o usuário é criado.",
@@ -138,6 +132,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
 
         return self.email
+
+    @property
+    def updated_at_formated(self):
+        """
+        Data de atualização
+        """
+
+        local_datetime = timezone.localtime(self.updated_at)
+
+        return local_datetime.strftime("Atualizado %A, %d de %B de %Y às %H:%M")
 
     @property
     def full_name(self):
