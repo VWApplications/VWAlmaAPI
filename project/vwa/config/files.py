@@ -1,11 +1,9 @@
 import os
 
-# Crie caminhos dentro do projeto como este: /software/vwa/config/files.py
+# Crie caminhos dentro do projeto como este: /vwa/config/files.py
 BASE_DIR = os.path.dirname(
     os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-        )
+        os.path.abspath(__file__)
     )
 )
 

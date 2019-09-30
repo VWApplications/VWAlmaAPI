@@ -1,8 +1,12 @@
 from rest_framework.views import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.utils.translation import ugettext_lazy as _
+from rest_framework.exceptions import ParseError
+from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 
 from .serializers import (
     UserSerializer, UserRegisterSerializer, UserPasswordSerializer
@@ -107,3 +111,40 @@ class UserViewSet(ModelViewSet):
             return Response({'success': True}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserUploadPhotoView(APIView):
+    """
+    Classe reponsável por armazenar a foto do usuário.
+    """
+
+    parser_class = (FileUploadParser,)
+
+    def put(self, request, *args, **kwargs):
+        """
+        Requisição para armazenar o arquivo.
+        """
+
+        logging.info("Atualizando a foto do usuário")
+
+        if 'photo' not in request.data:
+            raise ParseError(_("Empty content."))
+
+        img = request.data['photo']
+        filename = self.kwargs['filename']
+
+        logging.info("Foto {0}: {1}".format(filename, str(img)))
+
+        request.user.photo.save(filename, img, save=True)
+
+        logging.info("Foto atualizada com sucesso!")
+
+        return Response(status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Remove a foto do usuário.
+        """
+
+        request.user.photo.delete(save=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
