@@ -64,6 +64,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         unique=True
     )
 
+    identifier = models.CharField(
+        "Mátricula",
+        help_text="Identificador dentro de sua universidade",
+        max_length=50,
+        blank=True
+    )
+
     name = models.CharField(
         'Nome',
         help_text="Nome completo do usuário.",

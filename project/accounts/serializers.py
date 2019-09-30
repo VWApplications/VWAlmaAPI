@@ -19,7 +19,7 @@ class UserSerializer(ModelSerializer):
         fields = (
             'id', 'email', 'name', 'short_name',
             'photo', 'is_teacher', 'last_login',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at', 'identifier'
         )
         extra_kwargs = {'is_teacher': {'read_only': True}}
 
@@ -43,6 +43,9 @@ class UserSerializer(ModelSerializer):
 
         if "name" in validated_data.keys():
             instance.name = validated_data['name']
+
+        if "identifier" in validated_data.keys():
+            instance.identifier = validated_data['identifier']
 
         if 'photo' in validated_data.keys():
             instance.photo = validated_data['photo']
