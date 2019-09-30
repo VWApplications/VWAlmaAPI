@@ -7,9 +7,9 @@ router.register('', views.UserViewSet, basename="user")
 
 urlpatterns = [
     re_path(
-      r"^change_photo/(?P<filename>[-a-zA-Z0-9_]+.[a-z]{3})/$",
-      views.UserUploadPhotoView.as_view(),
-      name="change-photo"
+        r"^change_photo/(?P<filename>[-a-zA-Z0-9_]+.[a-z]{3})/$",
+        views.UserUploadPhotoView.as_view(),
+        name="change-photo"
     ),
     path('', include(router.urls))
 ]
