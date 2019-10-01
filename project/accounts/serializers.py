@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ParseError
-from rest_framework.serializers import ModelSerializer, CharField, DateTimeField
+from rest_framework.serializers import ModelSerializer, Serializer, CharField, DateTimeField
 from django.contrib.auth import get_user_model
 import logging
 
@@ -48,7 +48,7 @@ class UserSerializer(ModelSerializer):
         return instance
 
 
-class UserPasswordSerializer(ModelSerializer):
+class UserPasswordSerializer(Serializer):
     """
     O serializador para atualizar a senha do usuário.
     """
@@ -58,10 +58,6 @@ class UserPasswordSerializer(ModelSerializer):
     new_password = CharField(write_only=True, style={'input_type': 'password'})
 
     confirm_password = CharField(write_only=True, style={'input_type': 'password'})
-
-    class Meta:
-        model = User
-        fields = ('password', 'new_password', 'confirm_password')
 
     def update(self, instance, validated_data):
         """
@@ -94,6 +90,51 @@ class UserPasswordSerializer(ModelSerializer):
         instance.set_password(new_password)
 
         instance.save()
+
+        logging.info("Senha atualizada com sucesso!")
+
+        return instance
+
+
+class ResetPasswordSerializer(Serializer):
+    """
+    Reseta e cria uma nova senha.
+    """
+
+    new_password = CharField(write_only=True, style={'input_type': 'password'})
+
+    confirm_password = CharField(write_only=True, style={'input_type': 'password'})
+
+    def update(self, instance, validated_data):
+        """
+        Atualiza a senha do usuário.
+        """
+
+        logging.info("Instancia para atualização: " + str(instance))
+
+        reset = validated_data['reset']
+
+        if reset.confirmed:
+            raise ParseError(_("The key has already been used."))
+
+        if "new_password" not in validated_data.keys():
+            raise ParseError(_('New password is required.'))
+
+        if "confirm_password" not in validated_data.keys():
+            raise ParseError(_('Password confirmation is required.'))
+
+        new_password = validated_data['new_password']
+        confirm_password = validated_data['confirm_password']
+
+        # Verifica se ambas as senhas coincidem.
+        if new_password != confirm_password:
+            raise ParseError(_('The new passwords do not match.'))
+
+        instance.set_password(new_password)
+        reset.confirmed = True
+
+        instance.save()
+        reset.save()
 
         logging.info("Senha atualizada com sucesso!")
 

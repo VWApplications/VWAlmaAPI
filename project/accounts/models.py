@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.contrib.auth.models import (
@@ -176,3 +177,51 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         db_table = "accounts"
         ordering = ('email',)
+
+
+class PasswordReset(models.Model):
+    """
+    Cria uma chave para resetar a senha e criar uma nova.
+    """
+
+    # Usuário que solicitou a nova senha.
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Usuário',
+        related_name="password_resets"
+    )
+
+    # Chave única para resetar a senha.
+    key = models.CharField(
+        'Chave',
+        max_length=100,
+        unique=True
+    )
+
+    # Data de criação da chave para resetar a senha.
+    created_at = models.DateTimeField(
+        'Criado em',
+        auto_now_add=True
+    )
+
+    # Indica que o link já foi utilizado e não pode ser usado novamente.
+    confirmed = models.BooleanField(
+        'Confirmado?',
+        default=False
+    )
+
+    def __str__(self):
+        """
+        Retorna o objeto no formato string
+        """
+
+        return '{0} - {1}'.format(self.user, self.created_at)
+
+    class Meta:
+        """
+        Algumas informações adicionais.
+        """
+
+        db_table = "password_reset"
+        ordering = ['-created_at']

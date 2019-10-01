@@ -15,7 +15,8 @@ APPS = [
 
 EXTERNAL_APPS = [
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    "anymail"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + APPS + EXTERNAL_APPS

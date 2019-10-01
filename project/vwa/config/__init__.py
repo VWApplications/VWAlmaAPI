@@ -9,5 +9,5 @@ from .rest import REST_FRAMEWORK, CORS_ORIGIN_ALLOW_ALL, SIMPLE_JWT
 from .security import SECRET_KEY
 from .template import TEMPLATES
 from .users import AUTH_USER_MODEL
-from .email import EMAIL_BACKEND
+from .email import EMAIL_BACKEND, ANYMAIL, DEFAULT_FROM_EMAIL
 from .sentry import *

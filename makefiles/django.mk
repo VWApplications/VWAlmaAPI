@@ -20,6 +20,10 @@ install:
 	# Instala uma nova dependência
 	docker-compose exec alma pip3 install ${package}
 
+remove:
+	# Remove um pacote
+	docker-compose exec alma pip3 uninstall ${package}
+
 requirements:
 	# Verifica todas as dependências
 	docker-compose exec alma pip3 freeze

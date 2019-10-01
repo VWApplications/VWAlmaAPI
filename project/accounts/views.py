@@ -1,18 +1,17 @@
+from django.utils.translation import ugettext_lazy as _
 from rest_framework.views import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
-
-from .serializers import (
-    UserSerializer, UserRegisterSerializer, UserPasswordSerializer
-)
+from accounts.models import PasswordReset
+from accounts.utils import generate_hash_key
+from common.email import send_email_template
+from . import serializers, permissions
 from django.contrib.auth import get_user_model
-from .permissions import UpdateOwnProfile, CreateListUserPermission
 import logging
 
 User = get_user_model()
@@ -59,10 +58,13 @@ class UserViewSet(ModelViewSet):
 
         if self.action == 'list' or self.action == 'create':
             logging.info("Entrando no UserRegisterSerializer.")
-            return UserRegisterSerializer
+            return serializers.UserRegisterSerializer
         elif self.action == 'set_password':
             logging.info("Entrando no UserPasswordSerializer.")
-            return UserPasswordSerializer
+            return serializers.UserPasswordSerializer
+        elif self.action == 'create_new_password':
+            logging.info("Entrando no ResetPasswordSerializer")
+            return serializers.ResetPasswordSerializer
 
         logging.info("Entrando no UserSerializer.")
 
@@ -75,14 +77,72 @@ class UserViewSet(ModelViewSet):
         ações: list, create, destroy, retrieve, update, partial_update
         """
 
-        if self.action == 'list' or self.action == 'create':
-            permission_classes = (CreateListUserPermission,)
+        if (self.action == 'list' or self.action == 'create' or
+            self.action == 'reset_password' or self.action == 'create_new_password'):
+            permission_classes = (permissions.CreateListUserPermission,)
         else:
-            permission_classes = (IsAuthenticated, UpdateOwnProfile)
+            permission_classes = (IsAuthenticated, permissions.UpdateOwnProfile)
 
         logging.info("Permissões disparadas: " + str(permission_classes))
 
         return [permission() for permission in permission_classes]
+
+    @action(detail=False, methods=['post'], url_path="reset_password", url_name="reset-password")
+    def reset_password(self, request):
+        """
+        Reseta a senha.
+        """
+
+        logging.info("Resetando a senha do usuário.")
+
+        if "email" not in request.data:
+            raise ParseError(_("Email is required."))
+
+        user = User.objects.get(email=request.data['email'])
+
+        # Gera a chave única para resetar a senha.
+        key = generate_hash_key(user.email)
+        reset_password = PasswordReset(user=user, key=key)
+        reset_password.save()
+
+        # Envia o email
+        send_email_template(
+            subject=_('Requesting new password'),
+            template='reset_password_email.html',
+            context={'reset_password': reset_password},
+            recipient_list=[user.email],
+        )
+
+        return Response({'success': True}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['put'], url_path="create_new_password", url_name="create-new-password")
+    def create_new_password(self, request):
+        """
+        Cria uma nova senha para o usuário.
+        """
+
+        logging.info("Criando uma nova senha")
+
+        try:
+            # Pega o usuário de acordo com a chave passada.
+            reset = PasswordReset.objects.get(key=request.data['key'])
+        except PasswordReset.DoesNotExist as error:
+            logging.error(error)
+            logging.warning("Não foi possível encontrar o usuário da chave passada: " + str(request.data['key']))
+            raise ParseError(_("Invalid key."))
+
+        data = {
+            "new_password": request.data['new_password'],
+            "confirm_password": request.data['confirm_password'],
+            "reset": reset
+        }
+
+        serializer = self.get_serializer(reset.user, data=data)
+        if serializer.is_valid():
+            serializer.update(reset.user, data)
+            return Response({'success': True}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'], url_path="current_user", url_name="current-user")
     def current_user(self, request):
