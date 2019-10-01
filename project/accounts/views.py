@@ -98,7 +98,11 @@ class UserViewSet(ModelViewSet):
         if "email" not in request.data:
             raise ParseError(_("Email is required."))
 
-        user = User.objects.get(email=request.data['email'])
+        try:
+            user = User.objects.get(email=request.data['email'])
+        except User.DoesNotExist as error:
+            logging.info("Usuário não encontrado.")
+            return Response({'success': False}, status=status.HTTP_400_BAD_REQUEST)
 
         # Gera a chave única para resetar a senha.
         key = generate_hash_key(user.email)

@@ -1,5 +1,11 @@
+from django.utils.translation import ugettext_lazy as _
+from rest_framework.response import Response
+from rest_framework.views import status
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
+from common.email import send_email_template
+from django.conf import settings
 from .serializers import NewsTagsSerializer, TagSerializer
 from .models import News, Tag
 from .permissions import CreateUpdateDestroyAdminPermission
@@ -58,3 +64,43 @@ class TagsViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (CreateUpdateDestroyAdminPermission,)
+
+
+class ContactViewSet(APIView):
+    """
+    View para realizar contato com o administrador.
+    """
+
+    def post(self, request, *args, **kwargs):
+        """
+        Pega os dados do formulário e manda o email.
+        """
+
+        logging.info("Enviando uma mensagem para o administrador")
+        logging.info("Payload: " + str(request.data))
+
+        if "email" not in request.data:
+            raise ParseError(_("Email is required."))
+
+        if "name" not in request.data:
+            raise ParseError(_("Name is required."))
+
+        if "message" not in request.data:
+            raise ParseError(_("Message is required."))
+
+        # Envia o email
+        send_email_template(
+            subject=_('Contact from ALMA Plataform'),
+            template='email.html',
+            from_email="mailgun@sandbox43d3bc2d2ec44a6688b52d324f1f7cb3.mailgun.org",
+            context={
+                'name': request.data['name'],
+                'email': request.data['email'],
+                'message': request.data['message']
+            },
+            recipient_list=[settings.DEFAULT_FROM_EMAIL]
+        )
+
+        logging.info("Email enviado com sucesso!")
+
+        return Response({'success': True}, status=status.HTTP_200_OK)
