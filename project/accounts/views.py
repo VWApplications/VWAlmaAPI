@@ -68,7 +68,7 @@ class UserViewSet(ModelViewSet):
 
         logging.info("Entrando no UserSerializer.")
 
-        return UserSerializer
+        return serializers.UserSerializer
 
     def get_permissions(self):
         """
