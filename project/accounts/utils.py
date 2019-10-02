@@ -1,4 +1,3 @@
-from django.utils import translation
 import hashlib
 import string
 import random

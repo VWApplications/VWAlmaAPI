@@ -64,8 +64,8 @@ class UpdateUserPasswordTestCase(APITestCase):
         response = self.client.put(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data,
-            [_('Old password invalid.')]
+            response.data['detail'],
+            _('Old password invalid.')
         )
 
     def test_invalid_update_user_new_password(self):
@@ -81,6 +81,6 @@ class UpdateUserPasswordTestCase(APITestCase):
         response = self.client.put(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data,
-            [_('The new passwords do not match.')]
+            response.data['detail'],
+            _('The new passwords do not match.')
         )

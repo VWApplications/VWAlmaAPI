@@ -100,7 +100,7 @@ class UserViewSet(ModelViewSet):
 
         try:
             user = User.objects.get(email=request.data['email'])
-        except User.DoesNotExist as error:
+        except User.DoesNotExist:
             logging.info("Usuário não encontrado.")
             return Response({'success': False}, status=status.HTTP_400_BAD_REQUEST)
 
