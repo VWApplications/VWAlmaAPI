@@ -1,8 +1,9 @@
 from .config import * # noqa: [F403, F401]
+from decouple import config
 import logging
 
 # Debug
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 try:
     logging.basicConfig(

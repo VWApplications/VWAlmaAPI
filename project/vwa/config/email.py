@@ -1,9 +1,10 @@
-# Email backend
+from decouple import config
+
 EMAIL_BACKEND_DEV = 'django.core.mail.backends.console.EmailBackend'
 
 ANYMAIL = {
-    "MAILGUN_API_KEY": "2a982de42eedd4b4a923a1084a454cf0-af6c0cec-013d6cb9",
-    "MAILGUN_SENDER_DOMAIN": 'sandboxa9413bd50595408390d634130398e610.mailgun.org'
+    "MAILGUN_API_KEY": config('MAILGUN_API_KEY'),
+    "MAILGUN_SENDER_DOMAIN": config('MAILGUN_SENDER_DOMAIN')
 }
 
 EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
