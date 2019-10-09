@@ -137,7 +137,7 @@ class Discipline(BaseModel):
 
         title = self.title.replace(" ", "-").lower()
 
-        return '{1}-{2}'.format(self.id, title)
+        return '{0}-{1}'.format(self.id, title)
 
     def __str__(self):
         """

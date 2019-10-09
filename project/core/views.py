@@ -15,7 +15,7 @@ import logging
 
 class CustomPagination(PageNumberPagination):
     """
-    Separar a lista de tickets em páginas.
+    Separar a lista em páginas.
     """
 
     page_size = 5
