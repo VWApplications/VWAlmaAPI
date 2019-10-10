@@ -32,6 +32,9 @@ class UserSerializer(ModelSerializer):
         if "email" in validated_data.keys():
             instance.email = validated_data['email']
 
+            if User.objects.filter(email=validated_data['email']).exists():
+                raise ParseError(_('There is already a user with this email.'))
+
         if "name" in validated_data.keys():
             instance.name = validated_data['name']
 

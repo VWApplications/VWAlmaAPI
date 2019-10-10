@@ -53,28 +53,7 @@ class DisciplineViewSet(ModelViewSet):
 
         logging.info(f"Disciplinas criadas: {convert_to_json(created_disciplines)}")
 
-        monitor_disciplines = Discipline.objects.filter(
-            monitors=self.request.user
-        )
-
-        logging.info(f"Disciplinas como monitor: {convert_to_json(monitor_disciplines)}")
-
-        queryset = []
-        for discipline in created_disciplines:
-            queryset.append(discipline)
-
-        for discipline in monitor_disciplines:
-            queryset.append(discipline)
-
-        filtered = self.request.query_params.get('filter', None)
-        logging.info(f"Parâmetro da requisição: {filtered}")
-
-        if filtered == 'created':
-            queryset = created_disciplines
-        elif filtered == 'monitor':
-            queryset = monitor_disciplines
-
-        return queryset
+        return created_disciplines
 
     def filter_student_disciplines(self):
         """
