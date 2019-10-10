@@ -32,20 +32,20 @@ class Discipline(BaseModel):
 
     title = models.CharField(
         "Título",
-        max_length=100,
+        max_length=50,
         help_text="Título da disciplina"
     )
 
     institution = models.CharField(
         'Instituição',
         help_text="Universidade ou escola em que o usuário está inserido.",
-        max_length=100,
+        max_length=50,
         blank=True
     )
 
     course = models.CharField(
         "Curso",
-        max_length=100,
+        max_length=50,
         help_text="Curso que é ministrado a disciplina.",
         blank=True
     )
@@ -70,7 +70,7 @@ class Discipline(BaseModel):
 
     students_limit = models.PositiveIntegerField(
         'Limite de estudantes.',
-        default=0,
+        default=5,
         help_text="Limite de estudantes para entrar na turma.",
         validators=[
             MaxValueValidator(

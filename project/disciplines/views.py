@@ -28,12 +28,15 @@ class DisciplineViewSet(ModelViewSet):
 
         logging.info("Buscando as disciplinas")
 
-        if self.request.user.is_teacher:
-            queryset = self.filter_teacher_disciplines()
-        else:
-            queryset = self.filter_student_disciplines()
+        if (self.action == "list"):
+            if self.request.user.is_teacher:
+                queryset = self.filter_teacher_disciplines()
+            else:
+                queryset = self.filter_student_disciplines()
 
-        logging.info(f"Queryset: {convert_to_json(queryset)}")
+            logging.info(f"Queryset: {convert_to_json(queryset)}")
+        else:
+            queryset = Discipline.objects.all()
 
         return queryset
 

@@ -32,7 +32,8 @@ class DisciplineSerializer(ModelSerializer):
         fields = (
             'id', 'title', 'description', 'course', 'teacher',
             'classroom', 'password', 'students', 'monitors',
-            'students_limit', 'monitors_limit', 'is_closed'
+            'students_limit', 'monitors_limit', 'is_closed',
+            'institution'
         )
         read_only_fields = ('students', 'monitors')
 
