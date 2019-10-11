@@ -30,10 +30,11 @@ class UserSerializer(ModelSerializer):
         logging.info("Dados para atualização: " + str(validated_data))
 
         if "email" in validated_data.keys():
+            if validated_data['email'] != instance.email and User.objects.filter(email=validated_data['email']).exists():
+                raise ParseError(_('There is already a user with this email.'))
+
             instance.email = validated_data['email']
 
-            if User.objects.filter(email=validated_data['email']).exists():
-                raise ParseError(_('There is already a user with this email.'))
 
         if "name" in validated_data.keys():
             instance.name = validated_data['name']

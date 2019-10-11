@@ -1,4 +1,5 @@
 from django.forms.models import model_to_dict
+from django.db.models.query import QuerySet
 
 
 def convert_to_json(model, fields=None):
@@ -7,18 +8,18 @@ def convert_to_json(model, fields=None):
     lista de dicionários
     """
 
-    if type(model) == dict:
-        if not fields:
-            fields = [field.name for field in model._meta.fields]
+    if isinstance(model, QuerySet):
+        result = []
+        for obj in model:
 
-        return model_to_dict(model, fields=fields)
+            if not fields:
+                fields = [field.name for field in obj._meta.fields]
 
-    result = []
-    for obj in model:
+            result.append(model_to_dict(obj, fields=fields))
 
-        if not fields:
-            fields = [field.name for field in obj._meta.fields]
+        return result
 
-        result.append(model_to_dict(obj, fields=fields))
+    if not fields:
+        fields = [field.name for field in model._meta.fields]
 
-    return result
+    return model_to_dict(model, fields=fields)
