@@ -1,4 +1,5 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from accounts.enum import PermissionSet
 import logging
 
 
@@ -59,6 +60,6 @@ def is_teacher(request):
     is_teacher = False
 
     if is_logged(request):
-        is_teacher = request.user.is_teacher
+        is_teacher = request.user.permission == PermissionSet.TEACHER.value
 
     return is_teacher

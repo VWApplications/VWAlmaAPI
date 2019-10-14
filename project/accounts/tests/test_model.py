@@ -1,4 +1,5 @@
 from rest_framework.test import APITestCase
+from accounts.enum import PermissionSet
 from accounts.models import User
 
 
@@ -15,6 +16,7 @@ class UserTestCase(APITestCase):
         self.superuser = User.objects.create_superuser(
             name='Victor Arnaud',
             email='victorhad@gmail.com',
+            permission=PermissionSet.TEACHER.value,
             password='victorhad123456'
         )
         self.user1 = User.objects.create(
@@ -30,7 +32,7 @@ class UserTestCase(APITestCase):
         self.user3 = User.objects.create(
             name='Jose da Silva Pereira',
             email='jose@gmail.com',
-            is_teacher=True,
+            permission=PermissionSet.TEACHER.value,
             password='jose123456',
             photo='img/photo01.png'
         )
@@ -70,7 +72,7 @@ class UserTestCase(APITestCase):
         Teste to verify if user is a teacher or a student
         """
 
-        self.assertEqual(self.superuser.is_teacher, True)
-        self.assertEqual(self.user1.is_teacher, False)
-        self.assertEqual(self.user2.is_teacher, False)
-        self.assertEqual(self.user3.is_teacher, True)
+        self.assertEqual(self.superuser.permission, PermissionSet.TEACHER.value)
+        self.assertEqual(self.user1.permission, PermissionSet.STUDENT.value)
+        self.assertEqual(self.user2.permission, PermissionSet.STUDENT.value)
+        self.assertEqual(self.user3.permission, PermissionSet.TEACHER.value)

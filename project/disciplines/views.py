@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from common.utils import convert_to_json
+from accounts.enum import PermissionSet
 from core.views import CustomPagination
 from .serializers import DisciplineSerializer
 from .permissions import (
@@ -29,7 +30,7 @@ class DisciplineViewSet(ModelViewSet):
         logging.info("Buscando as disciplinas")
 
         if (self.action == "list"):
-            if self.request.user.is_teacher:
+            if self.request.user.permission == PermissionSet.TEACHER.value:
                 queryset = self.filter_teacher_disciplines()
             else:
                 queryset = self.filter_student_disciplines()

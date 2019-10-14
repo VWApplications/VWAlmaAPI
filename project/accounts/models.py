@@ -48,7 +48,7 @@ class UserProfileManager(BaseUserManager):
         # Insere previlégios de superuser
         user.is_superuser = True
         user.is_staff = True
-        user.is_teacher = True
+        user.permission = PermissionSet.ADMIN.value
 
         user.save(using=self._db)
 
@@ -85,12 +85,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text="Foto do usuário",
         blank=True,
         null=True
-    )
-
-    is_teacher = models.BooleanField(
-        'É professor?',
-        help_text="Verifique se o usuário é professor ou aluno.",
-        default=False
     )
 
     permission = models.CharField(

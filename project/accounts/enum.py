@@ -9,4 +9,3 @@ class PermissionSet(Enum):
     ADMIN = "ADMIN"
     TEACHER = "TEACHER"
     STUDENT = "STUDENT"
-    MONITOR = "MONITOR"

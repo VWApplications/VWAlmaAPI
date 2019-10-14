@@ -17,10 +17,9 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = (
             'id', 'email', 'name', 'short_name',
-            'photo', 'is_teacher', 'last_login', 'permission',
+            'photo', 'last_login', 'permission',
             'created_at', 'updated_at_formated', 'identifier'
         )
-        extra_kwargs = {'is_teacher': {'read_only': True}}
 
     def update(self, instance, validated_data):
         """
@@ -163,7 +162,7 @@ class UserRegisterSerializer(ModelSerializer):
         model = User
         fields = (
             'id', 'name', 'email', 'short_name', 'permission',
-            'photo', 'is_teacher', 'last_login', 'created_at',
+            'photo', 'last_login', 'created_at',
             'updated_at', 'password', 'confirm_password'
         )
 
@@ -211,12 +210,8 @@ class UserRegisterSerializer(ModelSerializer):
             name=validated_data['name']
         )
 
-        if validated_data.get('is_teacher', False):
-            user.is_teacher = True
-            user.permission = PermissionSet.TEACHER.value
-        else:
-            user.is_teacher = False
-            user.permission = PermissionSet.STUDENT.value
+        if "permission" in validated_data.keys():
+            user.permission = validated_data['permission']
 
         if 'photo' in validated_data.keys():
             user.photo = validated_data['photo']
