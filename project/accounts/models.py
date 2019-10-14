@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from accounts.enum import PermissionSet
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
@@ -90,6 +91,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         'É professor?',
         help_text="Verifique se o usuário é professor ou aluno.",
         default=False
+    )
+
+    permission = models.CharField(
+        "Permissão.",
+        help_text="Verifica o tipo de permissão que o usuário tem.",
+        max_length=50,
+        default=PermissionSet.STUDENT.value
     )
 
     # Ao inves de deletar usuários, você pode desativa-los.

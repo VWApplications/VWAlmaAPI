@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ParseError
 from rest_framework.serializers import ModelSerializer, Serializer, CharField, DateTimeField
+from accounts.enum import PermissionSet
 from django.contrib.auth import get_user_model
 import logging
 
@@ -16,7 +17,7 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = (
             'id', 'email', 'name', 'short_name',
-            'photo', 'is_teacher', 'last_login',
+            'photo', 'is_teacher', 'last_login', 'permission',
             'created_at', 'updated_at_formated', 'identifier'
         )
         extra_kwargs = {'is_teacher': {'read_only': True}}
@@ -35,12 +36,14 @@ class UserSerializer(ModelSerializer):
 
             instance.email = validated_data['email']
 
-
         if "name" in validated_data.keys():
             instance.name = validated_data['name']
 
         if "identifier" in validated_data.keys():
             instance.identifier = validated_data['identifier']
+
+        if "permission" in validated_data.keys():
+            instance.permission = validated_data['permission']
 
         if 'photo' in validated_data.keys():
             instance.photo = validated_data['photo']
@@ -159,7 +162,7 @@ class UserRegisterSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'name', 'email', 'short_name',
+            'id', 'name', 'email', 'short_name', 'permission',
             'photo', 'is_teacher', 'last_login', 'created_at',
             'updated_at', 'password', 'confirm_password'
         )
@@ -205,9 +208,15 @@ class UserRegisterSerializer(ModelSerializer):
 
         user = User(
             email=validated_data['email'],
-            name=validated_data['name'],
-            is_teacher=validated_data.get('is_teacher', False)
+            name=validated_data['name']
         )
+
+        if validated_data.get('is_teacher', False):
+            user.is_teacher = True
+            user.permission = PermissionSet.TEACHER.value
+        else:
+            user.is_teacher = False
+            user.permission = PermissionSet.STUDENT.value
 
         if 'photo' in validated_data.keys():
             user.photo = validated_data['photo']

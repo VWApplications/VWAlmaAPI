@@ -8,7 +8,7 @@ def convert_to_json(model, fields=None):
     lista de dicionários
     """
 
-    if isinstance(model, QuerySet):
+    if isinstance(model, QuerySet) or isinstance(model, list):
         result = []
         for obj in model:
 
