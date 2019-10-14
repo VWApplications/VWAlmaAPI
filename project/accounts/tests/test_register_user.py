@@ -18,7 +18,6 @@ class CreateUserTestCase(APITestCase):
 
         self.superuser = User.objects.create_superuser(
             name='Victor Arnaud',
-            permission=PermissionSet.TEACHER.value,
             email='victorhad@gmail.com',
             password='victorhad123456'
         )

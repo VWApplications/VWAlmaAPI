@@ -16,7 +16,6 @@ class UserTestCase(APITestCase):
         self.superuser = User.objects.create_superuser(
             name='Victor Arnaud',
             email='victorhad@gmail.com',
-            permission=PermissionSet.TEACHER.value,
             password='victorhad123456'
         )
         self.user1 = User.objects.create(
@@ -72,7 +71,7 @@ class UserTestCase(APITestCase):
         Teste to verify if user is a teacher or a student
         """
 
-        self.assertEqual(self.superuser.permission, PermissionSet.TEACHER.value)
+        self.assertEqual(self.superuser.permission, PermissionSet.ADMIN.value)
         self.assertEqual(self.user1.permission, PermissionSet.STUDENT.value)
         self.assertEqual(self.user2.permission, PermissionSet.STUDENT.value)
         self.assertEqual(self.user3.permission, PermissionSet.TEACHER.value)
