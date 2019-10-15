@@ -1,14 +1,16 @@
+from django.utils.translation import ugettext_lazy as _
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.views import status
 from common.utils import convert_to_json
 from accounts.enum import PermissionSet
 from core.views import CustomPagination
-from .serializers import DisciplineSerializer
-from .permissions import (
-    OnlyLoggedTeacherCanCreateDiscipline,
-    UpdateYourOwnDisciplines
-)
+from . import serializers
+from . import permissions
 from .models import Discipline
+from django.db.models import Q
 import logging
 
 
@@ -18,7 +20,6 @@ class DisciplineViewSet(ModelViewSet):
     """
 
     queryset = Discipline.objects.all()
-    serializer_class = DisciplineSerializer
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -37,7 +38,7 @@ class DisciplineViewSet(ModelViewSet):
 
             logging.info(f"Queryset: {convert_to_json(queryset)}")
         else:
-            queryset = Discipline.objects.all()
+            queryset = Discipline.objects.available(self.request.user)
 
         return queryset
 
@@ -92,6 +93,23 @@ class DisciplineViewSet(ModelViewSet):
 
         return queryset
 
+    def get_serializer_class(self):
+        """
+        Retorna a classe de serialização de acordo com o tipo
+        de ação disparado.
+
+        ações: list, create, destroy, retrieve, update, partial_update
+        """
+
+        logging.info(f"Action disparada: {self.action}")
+
+        if self.action == 'enter_discipline':
+            logging.info("Entrando no EnterDisciplineSerializer.")
+            return serializers.EnterDisciplineSerializer
+
+        logging.info("Entrando no DisciplineSerializer.")
+        return serializers.DisciplineSerializer
+
     def get_permissions(self):
         """
         Instancia e retorna a lista de permissões que essa ação requer.
@@ -102,10 +120,81 @@ class DisciplineViewSet(ModelViewSet):
         logging.info(f"Action disparada: {self.action}")
 
         if self.action == 'list' or self.action == 'create':
-            permission_classes = (OnlyLoggedTeacherCanCreateDiscipline,)
+            permission_classes = (permissions.OnlyLoggedTeacherCanCreateDiscipline,)
+        elif self.action == 'search':
+            permission_classes = (permissions.SearchDiscipline,)
+        elif self.action == 'enter_discipline':
+            permission_classes = (permissions.EnterDiscipline,)
         else:
-            permission_classes = (IsAuthenticated, UpdateYourOwnDisciplines,)
+            permission_classes = (IsAuthenticated, permissions.UpdateYourOwnDisciplines,)
 
         logging.info(f"Permissões disparadas: {permission_classes}")
 
         return [permission() for permission in permission_classes]
+
+    @action(detail=False, methods=['get'], url_path="search", url_name="search")
+    def search(self, request):
+        """
+        Pega as disciplinas pesquisadas.
+        """
+
+        logging.info("Pesquisando disciplinas")
+
+        disciplines = self.get_queryset()
+
+        ordered = self.request.query_params.get('order', None)
+        searched = self.request.query_params.get('search', None)
+
+        logging.info(f"Parâmetros: {ordered} e {searched}")
+
+        if ordered:
+            if ordered == "course":
+                disciplines = disciplines.order_by('course')
+            elif ordered == "discipline":
+                disciplines = disciplines.order_by('title')
+            elif ordered == "teacher":
+                disciplines = disciplines.order_by('teacher__name')
+
+        if searched:
+            disciplines = disciplines.filter(
+                Q(title__icontains=searched) |
+                Q(course__icontains=searched) |
+                Q(classroom__icontains=searched) |
+                Q(institution__icontains=searched) |
+                Q(teacher__name__icontains=searched)
+            )
+
+        logging.info(f"Disciplinas filtradas: {disciplines}")
+
+        page = self.paginate_queryset(disciplines)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(disciplines, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'], url_path="enter", url_name="enter")
+    def enter_discipline(self, request, pk):
+        """
+        Entra na disciplina.
+        """
+
+        logging.info("Entrando na disciplina.")
+
+        logging.info(f"Payload: pk={pk}, data={request.data} e student={request.user}")
+        password = request.data['password']
+
+        discipline = self.get_object()
+        logging.info(f"Disciplina: {convert_to_json(discipline)}")
+        logging.info(f"Lista de estudantes: {convert_to_json(discipline.students.all())}")
+
+        if password == discipline.password:
+            discipline.students.add(request.user)
+            logging.info(f"Lista de estudantes atualizada: {convert_to_json(discipline.students.all())}")
+        else:
+            logging.warn("Senha incorreta.")
+            return Response({"success": False, "detail": _("Incorrect Password.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"success": True}, status=status.HTTP_200_OK)

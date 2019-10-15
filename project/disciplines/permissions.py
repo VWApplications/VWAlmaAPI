@@ -18,6 +18,36 @@ class OnlyLoggedTeacherCanCreateDiscipline(BasePermission):
         return False
 
 
+class SearchDiscipline(BasePermission):
+    """
+    Permissão para pesquisar disciplinas.
+    """
+
+    def has_permission(self, request, view):
+        if is_read_mode(request) and not is_teacher(request):
+            logging.info("Permitido: Modo leitura e usuário estudante.")
+            return True
+
+        logging.warning("Permissão Negada.")
+
+        return False
+
+
+class EnterDiscipline(BasePermission):
+    """
+    Permissão para entrar em uma disciplina.
+    """
+
+    def has_permission(self, request, view):
+        if not is_teacher(request):
+            logging.info("Permitido: Usuário estudante.")
+            return True
+
+        logging.warning("Permissão Negada.")
+
+        return False
+
+
 class UpdateYourOwnDisciplines(BasePermission):
     """
     Permita que apenas o professor específico que criou uma disciplina a atualize ou exclua.
