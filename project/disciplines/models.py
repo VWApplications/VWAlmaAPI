@@ -12,21 +12,6 @@ class DisciplineManager(models.Manager):
     Crie um conjunto de consultas personalizado da disciplina.
     """
 
-    def search(self, query):
-        """
-        Pesquisar uma disciplina por título, descrição, curso, sala de aula ou nome do professor
-        contém a consulta especificada pelo usuário e filtra todas as disciplinas que
-        satisfazem essa consulta.
-        """
-
-        return self.get_queryset().filter(
-            models.Q(title__icontains=query) |
-            models.Q(course__icontains=query) |
-            models.Q(classroom__icontains=query) |
-            models.Q(institution__icontains=query) |
-            models.Q(teacher__name__icontains=query)
-        )
-
     def available(self, user):
         """
         Remova do conjunto de consultas a disciplina que o professor é proprietário,
@@ -126,7 +111,6 @@ class Discipline(BaseModel):
         default=False,
         help_text="Liberar o grupo para visualização"
     )
-
 
     teacher = models.ForeignKey(
         User,

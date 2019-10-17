@@ -158,7 +158,13 @@ class DisciplineViewSet(ModelViewSet):
                 disciplines = disciplines.order_by('teacher__name')
 
         if searched:
-            disciplines = disciplines.search(searched)
+            disciplines = disciplines.filter(
+                Q(title__icontains=searched) |
+                Q(course__icontains=searched) |
+                Q(classroom__icontains=searched) |
+                Q(institution__icontains=searched) |
+                Q(teacher__name__icontains=searched)
+            )
 
         logging.info(f"Disciplinas filtradas: {disciplines}")
 
