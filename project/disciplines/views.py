@@ -30,15 +30,17 @@ class DisciplineViewSet(ModelViewSet):
 
         logging.info("Buscando as disciplinas")
 
-        if (self.action == "list"):
+        if self.action == "list":
             if self.request.user.permission == PermissionSet.TEACHER.value:
                 queryset = self.filter_teacher_disciplines()
             else:
                 queryset = self.filter_student_disciplines()
 
             logging.info(f"Queryset: {convert_to_json(queryset)}")
-        else:
+        elif self.action == "search":
             queryset = Discipline.objects.available(self.request.user)
+        else:
+            queryset = Discipline.objects.all()
 
         return queryset
 
@@ -117,7 +119,7 @@ class DisciplineViewSet(ModelViewSet):
         Ações: list, create, destroy, retrieve, update, partial_update
         """
 
-        logging.info(f"Action disparada: {self.action}")
+        logging.info(f"###### Action disparada: {self.action} ######")
 
         if self.action == 'list' or self.action == 'create':
             permission_classes = (permissions.OnlyLoggedTeacherCanCreateDiscipline,)
@@ -156,13 +158,7 @@ class DisciplineViewSet(ModelViewSet):
                 disciplines = disciplines.order_by('teacher__name')
 
         if searched:
-            disciplines = disciplines.filter(
-                Q(title__icontains=searched) |
-                Q(course__icontains=searched) |
-                Q(classroom__icontains=searched) |
-                Q(institution__icontains=searched) |
-                Q(teacher__name__icontains=searched)
-            )
+            disciplines = disciplines.search(searched)
 
         logging.info(f"Disciplinas filtradas: {disciplines}")
 
@@ -196,5 +192,67 @@ class DisciplineViewSet(ModelViewSet):
         else:
             logging.warn("Senha incorreta.")
             return Response({"success": False, "detail": _("Incorrect Password.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path="toogle_status", url_name="toogle-status")
+    def toogle_discipline_status(self, request, pk):
+        """
+        Fechar a disciplina se tiver aberta e abre se tiver fechada.
+        """
+
+        logging.info("Alternando status da disciplina.")
+
+        discipline = self.get_object()
+        logging.info(f"Disciplina: {convert_to_json(discipline)}")
+        logging.info(f"Discipline IS_CLOSED: {discipline.is_closed}")
+
+        discipline.is_closed = not discipline.is_closed
+        discipline.save()
+
+        logging.info(f"Discipline IS_CLOSED: {discipline.is_closed}")
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path="reset", url_name="reset")
+    def reset_discipline(self, request, pk):
+        """
+        Reseta a disciplina para um novo semestre.
+        Deletar:
+            - Groups
+            - FinalGrades
+            - Notification
+            - Submissions
+            - SessionGrades
+
+        Modificar atributos:
+            - session.is_closed = True
+            - session.is_finished = True
+        """
+
+        logging.info("Resetando a disciplina.")
+
+        discipline = self.get_object()
+        logging.info(f"Disciplina: {convert_to_json(discipline)}")
+
+        # Modificando os atributos da disciplina
+        discipline.is_closed = True
+        discipline.was_group_provided = False
+
+        # TODO: Deletando instâncias
+
+        # Removendo estudantes e monitores
+        for student in discipline.students.all():
+            discipline.students.remove(student)
+
+        for monitor in discipline.monitors.all():
+            discipline.monitors.remove(monitor)
+
+        # TODO: Modificando os atributos das sessões
+
+        # TODO: Deletando instâncias relacionadas as sessões
+
+        discipline.save()
+        logging.info(f"Disciplina Resetada: {convert_to_json(discipline)}")
 
         return Response({"success": True}, status=status.HTTP_200_OK)
