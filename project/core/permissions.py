@@ -23,6 +23,21 @@ class CreateUpdateDestroyAdminPermission(BasePermission):
         return False
 
 
+class IsReadMode(BasePermission):
+    """
+    Para modo leitura.
+    """
+
+    def has_permission(self, request, view):
+        if is_read_mode(request):
+            logging.info("Permitido: Modo leitura.")
+            return True
+
+        logging.warning("Permissão Negada.")
+
+        return False
+
+
 def is_read_mode(request):
     """
     Método de lista e recuperação, somente modo de leitura (métodos seguros)

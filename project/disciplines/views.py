@@ -7,6 +7,7 @@ from rest_framework.views import status
 from common.utils import convert_to_json
 from accounts.enum import PermissionSet
 from core.views import CustomPagination
+from core.permissions import IsReadMode
 from . import serializers
 from . import permissions
 from .models import Discipline
@@ -127,8 +128,10 @@ class DisciplineViewSet(ModelViewSet):
             permission_classes = (permissions.SearchDiscipline,)
         elif self.action == 'enter_discipline':
             permission_classes = (permissions.EnterDiscipline,)
+        elif self.action == 'retrieve':
+            permission_classes = (IsAuthenticated, IsReadMode)
         else:
-            permission_classes = (IsAuthenticated, permissions.UpdateYourOwnDisciplines,)
+            permission_classes = (IsAuthenticated, permissions.UpdateYourOwnDisciplines)
 
         logging.info(f"Permissões disparadas: {permission_classes}")
 

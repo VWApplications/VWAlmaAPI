@@ -54,13 +54,8 @@ class UpdateYourOwnDisciplines(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        can_update = False
-
-        if is_logged(request):
-            can_update = is_owner(request, obj)
-
-        if can_update or is_read_mode(request):
-            logging.info("Permitido: Usuário é dono da disciplina ou ta em modo de leitura.")
+        if is_owner(request, obj):
+            logging.info("Permitido: Usuário é dono da disciplina.")
             return True
 
         logging.warning("Permissão Negada.")
