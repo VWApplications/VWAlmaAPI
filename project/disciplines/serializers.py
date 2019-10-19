@@ -24,8 +24,6 @@ class DisciplineSerializer(ModelSerializer):
     """
 
     teacher = UserDisciplineSerializer(read_only=True)
-    students = UserDisciplineSerializer(read_only=True, many=True)
-    monitors = UserDisciplineSerializer(read_only=True, many=True)
 
     password = CharField(write_only=True, required=False)
 

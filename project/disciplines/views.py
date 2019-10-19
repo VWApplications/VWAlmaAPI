@@ -320,6 +320,9 @@ class DisciplineViewSet(ModelViewSet):
         except User.DoesNotExist:
             return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
 
+        if student in discipline.students.all():
+            return Response({"success": False, "detail": _("User is already in the discipline.")}, status=status.HTTP_400_BAD_REQUEST)
+
         discipline.students.add(student)
 
         return Response({"success": True}, status=status.HTTP_200_OK)
