@@ -45,6 +45,6 @@ images:
 
 container := "alma"
 
-exec:
+bash:
 	# Entra no terminal do container
 	docker-compose exec ${container} bash

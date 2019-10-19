@@ -15,7 +15,7 @@ class UserDisciplineSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'short_name', 'email', 'photo', 'identifier')
+        fields = ('id', 'short_name', 'email', 'photo', 'identifier', 'permission')
 
 
 class DisciplineSerializer(ModelSerializer):

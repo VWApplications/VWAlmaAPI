@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from core.permissions import is_read_mode, is_logged, is_teacher
+from core.permissions import is_read_mode, is_teacher
 import logging
 
 
@@ -41,6 +41,22 @@ class EnterDiscipline(BasePermission):
     def has_permission(self, request, view):
         if not is_teacher(request):
             logging.info("Permitido: Usuário estudante.")
+            return True
+
+        logging.warning("Permissão Negada.")
+
+        return False
+
+
+class SeeDiscipline(BasePermission):
+    """
+    Permite que um aluno só veja a disciplina se ele estiver dentro
+    da disciplina.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if request.user in obj.students.all() or request.user in obj.monitors.all():
+            logging.info("Permitido: Usuário é aluno ou monitor da disciplina.")
             return True
 
         logging.warning("Permissão Negada.")

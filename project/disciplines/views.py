@@ -4,15 +4,20 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import status
+from django.contrib.auth import get_user_model
 from common.utils import convert_to_json
 from accounts.enum import PermissionSet
 from core.views import CustomPagination
-from core.permissions import IsReadMode
+from .permissions import (
+    OnlyLoggedTeacherCanCreateDiscipline, EnterDiscipline,
+    UpdateYourOwnDisciplines, SearchDiscipline, SeeDiscipline
+)
 from . import serializers
-from . import permissions
 from .models import Discipline
 from django.db.models import Q
 import logging
+
+User = get_user_model()
 
 
 class DisciplineViewSet(ModelViewSet):
@@ -20,8 +25,48 @@ class DisciplineViewSet(ModelViewSet):
     View para gerenciar disciplinas.
     """
 
-    queryset = Discipline.objects.all()
     pagination_class = CustomPagination
+
+    def get_serializer_class(self):
+        """
+        Retorna a classe de serialização de acordo com o tipo
+        de ação disparado.
+
+        ações: list, create, destroy, retrieve, update, partial_update
+        """
+
+        if self.action == 'enter_discipline':
+            logging.info("Entrando no EnterDisciplineSerializer.")
+            return serializers.EnterDisciplineSerializer
+
+        if self.action == 'discipline_students':
+            logging.info("Entrando no UserDisciplineSerializer.")
+            return serializers.UserDisciplineSerializer
+
+        logging.info("Entrando no DisciplineSerializer.")
+        return serializers.DisciplineSerializer
+
+    def get_permissions(self):
+        """
+        Instancia e retorna a lista de permissões que essa ação requer.
+        """
+
+        logging.info(f"###### Action disparada: {self.action} ######")
+
+        if self.action == 'list' or self.action == 'create':
+            permission_classes = (OnlyLoggedTeacherCanCreateDiscipline,)
+        elif self.action == 'retrieve' or self.action == 'discipline_students':
+            permission_classes = (IsAuthenticated, SeeDiscipline)
+        elif self.action == 'search_discipline':
+            permission_classes = (IsAuthenticated, SearchDiscipline)
+        elif self.action == 'enter_discipline':
+            permission_classes = (IsAuthenticated, EnterDiscipline)
+        else:
+            permission_classes = (IsAuthenticated, UpdateYourOwnDisciplines)
+
+        logging.info(f"Permissões disparadas: {permission_classes}")
+
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         """
@@ -37,8 +82,7 @@ class DisciplineViewSet(ModelViewSet):
             else:
                 queryset = self.filter_student_disciplines()
 
-            logging.info(f"Queryset: {convert_to_json(queryset)}")
-        elif self.action == "search":
+        elif self.action == "search_discipline":
             queryset = Discipline.objects.available(self.request.user)
         else:
             queryset = Discipline.objects.all()
@@ -96,49 +140,8 @@ class DisciplineViewSet(ModelViewSet):
 
         return queryset
 
-    def get_serializer_class(self):
-        """
-        Retorna a classe de serialização de acordo com o tipo
-        de ação disparado.
-
-        ações: list, create, destroy, retrieve, update, partial_update
-        """
-
-        logging.info(f"Action disparada: {self.action}")
-
-        if self.action == 'enter_discipline':
-            logging.info("Entrando no EnterDisciplineSerializer.")
-            return serializers.EnterDisciplineSerializer
-
-        logging.info("Entrando no DisciplineSerializer.")
-        return serializers.DisciplineSerializer
-
-    def get_permissions(self):
-        """
-        Instancia e retorna a lista de permissões que essa ação requer.
-
-        Ações: list, create, destroy, retrieve, update, partial_update
-        """
-
-        logging.info(f"###### Action disparada: {self.action} ######")
-
-        if self.action == 'list' or self.action == 'create':
-            permission_classes = (permissions.OnlyLoggedTeacherCanCreateDiscipline,)
-        elif self.action == 'search':
-            permission_classes = (permissions.SearchDiscipline,)
-        elif self.action == 'enter_discipline':
-            permission_classes = (permissions.EnterDiscipline,)
-        elif self.action == 'retrieve':
-            permission_classes = (IsAuthenticated, IsReadMode)
-        else:
-            permission_classes = (IsAuthenticated, permissions.UpdateYourOwnDisciplines)
-
-        logging.info(f"Permissões disparadas: {permission_classes}")
-
-        return [permission() for permission in permission_classes]
-
     @action(detail=False, methods=['get'], url_path="search", url_name="search")
-    def search(self, request):
+    def search_discipline(self, request):
         """
         Pega as disciplinas pesquisadas.
         """
@@ -172,13 +175,9 @@ class DisciplineViewSet(ModelViewSet):
         logging.info(f"Disciplinas filtradas: {disciplines}")
 
         page = self.paginate_queryset(disciplines)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(page, many=True)
 
-        serializer = self.get_serializer(disciplines, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data)
 
     @action(detail=True, methods=['post'], url_path="enter", url_name="enter")
     def enter_discipline(self, request, pk):
@@ -263,5 +262,127 @@ class DisciplineViewSet(ModelViewSet):
 
         discipline.save()
         logging.info(f"Disciplina Resetada: {convert_to_json(discipline)}")
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path="students", url_name="students")
+    def discipline_students(self, request, pk):
+        """
+        Pega a lista de estudantes e monitores da disciplina
+        e filtra caso precise.
+        """
+
+        logging.info("Buscando os estudantes e monitores de uma disciplina.")
+
+        discipline = self.get_object()
+        logging.info(f"Disciplina: {convert_to_json(discipline)}")
+
+        students = discipline.students.all()
+        monitors = discipline.monitors.all()
+        queryset = students | monitors
+
+        filtered = self.request.query_params.get('filter', None)
+        logging.info(f"Parâmetro da requisição: {filtered}")
+
+        if filtered == "students":
+            logging.info("Pegando os estudantes")
+            queryset = students
+        elif filtered == "monitors":
+            logging.info("Pegando os monitores")
+            queryset = monitors
+
+        logging.info(f"Queryset: {queryset}")
+
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+
+        return self.get_paginated_response(serializer.data)
+
+    @action(detail=True, methods=['post'], url_path="add_student", url_name="add-student")
+    def add_student(self, request, pk):
+        """
+        Insere um usuário como estudante da disciplina.
+        """
+
+        logging.info("Adicionando um novo estudante a disciplina.")
+
+        discipline = self.get_object()
+        logging.info(f"Disciplina: {convert_to_json(discipline)}")
+
+        data = request.data
+        logging.info(f"Payload: {data}")
+
+        if not data.get('email', ''):
+            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            student = User.objects.get(email=data['email'])
+        except User.DoesNotExist:
+            return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
+
+        discipline.students.add(student)
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'], url_path="remove_student", url_name="remove-student")
+    def remove_student(self, request, pk):
+        """
+        Remove um estudante da disciplina.
+        """
+
+        logging.info("Removendo o estudante da disciplina.")
+
+        discipline = self.get_object()
+        logging.info(f"Disciplina: {convert_to_json(discipline)}")
+
+        data = request.data
+        logging.info(f"Payload: {data}")
+
+        if not data.get('id', ''):
+            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            student = User.objects.get(id=data['id'])
+        except User.DoesNotExist:
+            return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
+
+        if student not in discipline.students.all() or student not in discipline.monitors.all():
+            return Response({"success": False, "detail": _("Student does not belong to discipline.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        if student in discipline.students.all():
+            discipline.students.remove(student)
+        else:
+            discipline.monitors.remove(student)
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'], url_path="toogle_student_status", url_name="toogle-student-status")
+    def toogle_student_status(self, request, pk):
+        """
+        Transforma um estudante em monitor e vise-versa.
+        """
+
+        logging.info("Alterando status do estudante.")
+
+        discipline = self.get_object()
+        logging.info(f"Disciplina: {convert_to_json(discipline)}")
+
+        data = request.data
+        logging.info(f"Payload: {data}")
+
+        if not data.get('id', ''):
+            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            student = User.objects.get(id=data['id'])
+        except User.DoesNotExist:
+            return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
+
+        if student in discipline.students.all():
+            discipline.students.remove(student)
+            discipline.monitors.add(student)
+        else:
+            discipline.monitors.remove(student)
+            discipline.students.add(student)
 
         return Response({"success": True}, status=status.HTTP_200_OK)
