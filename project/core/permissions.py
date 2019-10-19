@@ -37,7 +37,7 @@ class IsReadMode(BasePermission):
 
         return False
 
-
+    
 def is_read_mode(request):
     """
     Método de lista e recuperação, somente modo de leitura (métodos seguros)

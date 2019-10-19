@@ -59,6 +59,10 @@ class SeeDiscipline(BasePermission):
             logging.info("Permitido: Usuário é aluno ou monitor da disciplina.")
             return True
 
+        if is_owner(request, obj):
+            logging.info("Permitido: Usuário é dono da disciplina.")
+            return True
+
         logging.warning("Permissão Negada.")
 
         return False

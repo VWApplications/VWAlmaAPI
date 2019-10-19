@@ -312,7 +312,7 @@ class DisciplineViewSet(ModelViewSet):
         data = request.data
         logging.info(f"Payload: {data}")
 
-        if not data.get('email', ''):
+        if "email" not in data.keys():
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -338,7 +338,7 @@ class DisciplineViewSet(ModelViewSet):
         data = request.data
         logging.info(f"Payload: {data}")
 
-        if not data.get('id', ''):
+        if "id" not in data.keys():
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -346,7 +346,7 @@ class DisciplineViewSet(ModelViewSet):
         except User.DoesNotExist:
             return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
 
-        if student not in discipline.students.all() or student not in discipline.monitors.all():
+        if student not in discipline.students.all() and student not in discipline.monitors.all():
             return Response({"success": False, "detail": _("Student does not belong to discipline.")}, status=status.HTTP_400_BAD_REQUEST)
 
         if student in discipline.students.all():
@@ -370,13 +370,16 @@ class DisciplineViewSet(ModelViewSet):
         data = request.data
         logging.info(f"Payload: {data}")
 
-        if not data.get('id', ''):
+        if "id" not in data.keys():
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             student = User.objects.get(id=data['id'])
         except User.DoesNotExist:
             return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
+
+        if student not in discipline.students.all() and student not in discipline.monitors.all():
+            return Response({"success": False, "detail": _("Student does not belong to discipline.")}, status=status.HTTP_400_BAD_REQUEST)
 
         if student in discipline.students.all():
             discipline.students.remove(student)
