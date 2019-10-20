@@ -73,3 +73,58 @@ class GroupViewSet(GenericViewSet):
         group.save()
 
         return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'], url_path="add_student", url_name="add-student")
+    def add_student(self, request, pk):
+        """
+        Insere um estudante no grupo.
+        """
+
+        logging.info("Adicionando um novo estudante ao grupo.")
+
+        group = self.get_object()
+        logging.info(f"Grupo: {convert_to_json(group)}")
+
+        data = request.data
+        logging.info(f"Payload: {data}")
+
+        if "email" not in data.keys():
+            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            student = group.discipline.students.get(email=data['email'])
+        except User.DoesNotExist:
+            return Response({"success": False, "detail": _("User is not part of the discipline.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        if student in group.students.all():
+            return Response({"success": False, "detail": _("User is already in the group.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        group.students.add(student)
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'], url_path="remove_student", url_name="remove-student")
+    def remove_student(self, request, pk):
+        """
+        Remove um estudante da disciplina.
+        """
+
+        logging.info("Removendo o estudante do grupo.")
+
+        group = self.get_object()
+        logging.info(f"Grupo: {convert_to_json(group)}")
+
+        data = request.data
+        logging.info(f"Payload: {data}")
+
+        if "id" not in data.keys():
+            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            student = group.students.get(id=data['id'])
+        except User.DoesNotExist:
+            return Response({"success": False, "detail": _("User isn't part of the group.")}, status=status.HTTP_400_BAD_REQUEST)
+
+        group.students.remove(student)
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
