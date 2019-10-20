@@ -1,6 +1,5 @@
 from rest_framework.permissions import SAFE_METHODS
 from accounts.enum import PermissionSet
-import logging
 
 
 class GenericPermission:
@@ -59,7 +58,6 @@ class GenericPermission:
 
         return self.request.user in self.obj.monitors.all() and not self.is_teacher()
 
-
     def is_user_owner(self):
         """
         Verifica se o usuário é ele mesmo.
@@ -75,7 +73,6 @@ class GenericPermission:
         """
 
         return self.obj.teacher == self.request.user and self.is_teacher()
-
 
     def is_inside_discipline(self):
         """

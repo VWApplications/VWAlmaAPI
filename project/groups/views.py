@@ -6,12 +6,9 @@ from rest_framework.decorators import action
 from rest_framework.views import status
 from django.contrib.auth import get_user_model
 from common.utils import convert_to_json
-from accounts.enum import PermissionSet
-from disciplines.models import Discipline
 from . import serializers
 from . import permissions
 from .models import Group
-from django.db.models import Q
 import logging
 
 User = get_user_model()
@@ -30,7 +27,7 @@ class GroupViewSet(GenericViewSet):
         """
 
         self.change_action()
-        
+
         logging.info(f"###### Action disparada: {self.action} ######")
 
         if self.action == 'list' or self.action == 'retrieve':
