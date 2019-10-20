@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from core.permissions import is_read_mode, is_teacher
+from common.permissions import GenericPermission
 import logging
 
 
@@ -9,7 +9,9 @@ class OnlyLoggedTeacherCanCreateDiscipline(BasePermission):
     """
 
     def has_permission(self, request, view):
-        if is_teacher(request) or is_read_mode(request):
+        perm = GenericPermission(request)
+
+        if perm.is_teacher() or perm.is_read_mode():
             logging.info("Permitido: Modo leitura ou usuário professor.")
             return True
 
@@ -24,7 +26,9 @@ class SearchDiscipline(BasePermission):
     """
 
     def has_permission(self, request, view):
-        if is_read_mode(request) and not is_teacher(request):
+        perm = GenericPermission(request)
+
+        if perm.is_read_mode() and not perm.is_teacher():
             logging.info("Permitido: Modo leitura e usuário estudante.")
             return True
 
@@ -39,7 +43,9 @@ class EnterDiscipline(BasePermission):
     """
 
     def has_permission(self, request, view):
-        if not is_teacher(request):
+        perm = GenericPermission(request)
+
+        if not perm.is_teacher():
             logging.info("Permitido: Usuário estudante.")
             return True
 
@@ -55,12 +61,10 @@ class SeeDiscipline(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if request.user in obj.students.all() or request.user in obj.monitors.all():
-            logging.info("Permitido: Usuário é aluno ou monitor da disciplina.")
-            return True
+        perm = GenericPermission(request, obj)
 
-        if is_owner(request, obj):
-            logging.info("Permitido: Usuário é dono da disciplina.")
+        if perm.is_inside_discipline():
+            logging.info("Permitido: Usuário é professor, aluno ou monitor da disciplina.")
             return True
 
         logging.warning("Permissão Negada.")
@@ -74,20 +78,12 @@ class UpdateYourOwnDisciplines(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if is_owner(request, obj):
+        perm = GenericPermission(request, obj)
+
+        if perm.is_owner():
             logging.info("Permitido: Usuário é dono da disciplina.")
             return True
 
         logging.warning("Permissão Negada.")
 
         return False
-
-
-def is_owner(request, obj):
-    """
-    Ele verificará se o ID do professor da disciplina que eles
-    estão tentando atualizar é o objeto do professor autenticado,
-    seu próprio objeto.
-    """
-
-    return obj.teacher.id == request.user.id

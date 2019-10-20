@@ -31,6 +31,12 @@ class Group(BaseModel):
         help_text="Limite de estudantes do grupo"
     )
 
+    is_provided = models.BooleanField(
+        "Foi liberado?",
+        default=False,
+        help_text="O grupo foi liberado para visualização pelos estudantes."
+    )
+
     students = models.ManyToManyField(
         User,
         verbose_name='Students',

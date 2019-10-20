@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from core.permissions import is_read_mode, is_logged, is_admin
+from common.permissions import GenericPermission
 import logging
 
 
@@ -9,15 +9,17 @@ class UpdateOwnProfile(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if is_read_mode(request):
+        perm = GenericPermission(request, obj)
+
+        if perm.is_read_mode():
             logging.info("Permitido: Modo leitura.")
             return True
 
-        if is_admin(request):
+        if perm.is_admin():
             logging.info("Permitido: Usuário administrador.")
             return True
 
-        if is_owner(request, obj):
+        if perm.is_user_owner():
             logging.info("Permitido: Usuário dono do da conta.")
             return True
 
@@ -33,22 +35,16 @@ class CreateListUserPermission(BasePermission):
     """
 
     def has_permission(self, request, view):
-        if is_read_mode(request) or not is_logged(request):
+        perm = GenericPermission(request)
+
+        if perm.is_read_mode() or not perm.is_logged():
             logging.info("Permitido: Modo leitura ou o usuário não está logado.")
             return True
 
-        if is_logged(request) and is_admin(request):
+        if perm.is_logged() and perm.is_admin():
             logging.info("Permitido: Usuário logado e administrador.")
             return True
 
         logging.warning("Permissão Negada.")
 
         return False
-
-
-def is_owner(request, obj):
-    """
-    Verifica se o ID do usuário passado é o ID do usuário logado no sistema.
-    """
-
-    return obj.id == request.user.id
