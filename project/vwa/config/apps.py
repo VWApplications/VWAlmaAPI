@@ -10,7 +10,8 @@ DJANGO_APPS = [
 APPS = [
     'accounts',
     'core',
-    'disciplines'
+    'disciplines',
+    'groups'
 ]
 
 EXTERNAL_APPS = [

@@ -106,12 +106,6 @@ class Discipline(BaseModel):
         help_text="Verifica se a disciplina está fechada."
     )
 
-    was_group_provided = models.BooleanField(
-        "Liberar o grupo",
-        default=False,
-        help_text="Liberar o grupo para visualização"
-    )
-
     teacher = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

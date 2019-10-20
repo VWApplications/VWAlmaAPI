@@ -8,7 +8,8 @@ urlpatterns = [
     path('refresh-token/', jwt_views.TokenRefreshView.as_view(), name='login'),
     path('', include('core.urls')),
     path('users/', include('accounts.urls')),
-    path('disciplines/', include('disciplines.urls'))
+    path('disciplines/', include('disciplines.urls')),
+    path('groups/', include('groups.urls'))
 ]
 
 if settings.DEBUG:
