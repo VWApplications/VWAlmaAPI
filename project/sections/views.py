@@ -1,5 +1,9 @@
 from common.generic_view import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
+from common.utils import convert_to_json
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.views import status
 from common import permissions
 from . import serializers
 from .models import Section
@@ -46,3 +50,39 @@ class SectionViewSet(GenericViewSet):
 
         logging.info("Pegando todos os grupos.")
         return Section.objects.all()
+
+    @action(detail=True, methods=['get'], url_path="provide", url_name="provide")
+    def provide_section(self, request, pk):
+        """
+        Libera ou Fecha o seção da disciplina para visualização.
+        """
+
+        logging.info(f"Payload: pk={pk}")
+
+        section = self.get_object()
+        logging.info(f"Seção: {convert_to_json(section)}")
+
+        section.is_closed = not section.is_closed
+        section.save()
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path="finish", url_name="finish")
+    def finish_section(self, request, pk):
+        """
+        Finaliza ou Começa a seção da disciplina.
+        """
+
+        logging.info(f"Payload: pk={pk}")
+
+        section = self.get_object()
+        logging.info(f"Seção: {convert_to_json(section)}")
+
+        section.is_finished = not section.is_finished
+
+        if not section.is_closed:
+            section.is_closed = True
+
+        section.save()
+
+        return Response({"success": True}, status=status.HTTP_200_OK)
