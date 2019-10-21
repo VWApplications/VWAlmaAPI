@@ -7,7 +7,7 @@ from rest_framework.views import status
 from django.contrib.auth import get_user_model
 from common.utils import convert_to_json
 from . import serializers
-from . import permissions
+from common import permissions
 from .models import Group
 import logging
 
@@ -30,8 +30,10 @@ class GroupViewSet(GenericViewSet):
 
         logging.info(f"###### Action disparada: {self.action} ######")
 
-        if self.action == 'list' or self.action == 'retrieve':
+        if self.action == 'list':
             permission_classes = (IsAuthenticated, permissions.SeePage)
+        elif self.action == 'retrieve':
+            permission_classes = (IsAuthenticated, permissions.SeeObjPage)
         else:
             permission_classes = (IsAuthenticated, permissions.UpdateYourOwnDisciplines)
 

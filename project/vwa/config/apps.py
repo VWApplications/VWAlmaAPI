@@ -11,7 +11,8 @@ APPS = [
     'accounts',
     'core',
     'disciplines',
-    'groups'
+    'groups',
+    'sections'
 ]
 
 EXTERNAL_APPS = [
