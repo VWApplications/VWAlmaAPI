@@ -195,6 +195,12 @@ class DisciplineViewSet(ModelViewSet):
         logging.info(f"Lista de estudantes: {convert_to_json(discipline.students.all())}")
 
         if password == discipline.password:
+            if discipline.students_limit <= len(discipline.students):
+                return Response({"success": False, "detail": _("The discipline is full.")}, status=status.HTTP_400_BAD_REQUEST)
+
+            if discipline.is_closed:
+                return Response({"success": False, "detail": _("The discipline is closed.")}, status=status.HTTP_400_BAD_REQUEST)
+
             discipline.students.add(request.user)
             logging.info(f"Lista de estudantes atualizada: {convert_to_json(discipline.students.all())}")
         else:
@@ -245,7 +251,6 @@ class DisciplineViewSet(ModelViewSet):
 
         # Modificando os atributos da disciplina
         discipline.is_closed = True
-        discipline.was_group_provided = False
 
         # TODO: Deletando instâncias
 
@@ -259,6 +264,8 @@ class DisciplineViewSet(ModelViewSet):
         # TODO: Modificando os atributos das sessões
 
         # TODO: Deletando instâncias relacionadas as sessões
+
+        # TODO: Deletando instâncias relacionadas as disciplinas.
 
         discipline.save()
         logging.info(f"Disciplina Resetada: {convert_to_json(discipline)}")
@@ -323,6 +330,9 @@ class DisciplineViewSet(ModelViewSet):
         if student in discipline.students.all():
             return Response({"success": False, "detail": _("User is already in the discipline.")}, status=status.HTTP_400_BAD_REQUEST)
 
+        if discipline.students_limit <= len(discipline.students):
+            return Response({"success": False, "detail": _("The discipline is full.")}, status=status.HTTP_400_BAD_REQUEST)
+
         discipline.students.add(student)
 
         return Response({"success": True}, status=status.HTTP_200_OK)
@@ -385,9 +395,15 @@ class DisciplineViewSet(ModelViewSet):
             return Response({"success": False, "detail": _("Student does not belong to discipline.")}, status=status.HTTP_400_BAD_REQUEST)
 
         if student in discipline.students.all():
+            if discipline.monitors_limit <= len(discipline.monitors):
+                return Response({"success": False, "detail": _("Already reached monitor limit")}, status=status.HTTP_400_BAD_REQUEST)
+
             discipline.students.remove(student)
             discipline.monitors.add(student)
         else:
+            if discipline.students_limit <= len(discipline.students):
+                return Response({"success": False, "detail": _("The discipline is full.")}, status=status.HTTP_400_BAD_REQUEST)
+
             discipline.monitors.remove(student)
             discipline.students.add(student)
 
