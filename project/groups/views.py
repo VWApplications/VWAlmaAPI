@@ -100,6 +100,9 @@ class GroupViewSet(GenericViewSet):
         except User.DoesNotExist:
             return Response({"success": False, "detail": _("User is not part of the discipline.")}, status=status.HTTP_400_BAD_REQUEST)
 
+        if group.students_limit <= len(group.students):
+            return Response({"success": False, "detail": _("The group is full.")}, status=status.HTTP_400_BAD_REQUEST)
+
         for discipline_group in group.discipline.groups.all():
             if student in discipline_group.students.all():
                 return Response({"success": False, "detail": _("User is already in a group.")}, status=status.HTTP_400_BAD_REQUEST)
