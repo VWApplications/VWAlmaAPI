@@ -90,7 +90,11 @@ class SeePage(BasePermission):
     """
 
     def has_permission(self, request, view):
-        perm = GenericPermission(request, view.get_discipline())
+        discipline = view.get_discipline()
+        if not discipline:
+            return False
+
+        perm = GenericPermission(request, discipline)
 
         if perm.is_inside_discipline():
             logging.info("Permitido: Usuário é professor, aluno ou monitor da disciplina.")
@@ -112,6 +116,28 @@ class SeeObjPage(BasePermission):
 
         if perm.is_inside_discipline():
             logging.info("Permitido: Usuário é professor, aluno ou monitor da disciplina.")
+            return True
+
+        logging.warning("Permissão Negada.")
+
+        return False
+
+
+class CreateSomethingInYourOwnDisciplines(BasePermission):
+    """
+    Permite que um aluno só veja páginas se ele estiver dentro
+    da disciplina.
+    """
+
+    def has_permission(self, request, view):
+        discipline = view.get_discipline()
+        if not discipline:
+            return False
+
+        perm = GenericPermission(request, discipline)
+
+        if perm.is_owner():
+            logging.info("Permitido: Usuário é dono da disciplina.")
             return True
 
         logging.warning("Permissão Negada.")

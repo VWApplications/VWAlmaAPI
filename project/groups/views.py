@@ -34,6 +34,8 @@ class GroupViewSet(GenericViewSet):
             permission_classes = (IsAuthenticated, permissions.SeePage)
         elif self.action == 'retrieve':
             permission_classes = (IsAuthenticated, permissions.SeeObjPage)
+        elif self.action == 'create':
+            permission_classes = (IsAuthenticated, permissions.CreateSomethingInYourOwnDisciplines)
         else:
             permission_classes = (IsAuthenticated, permissions.UpdateYourOwnDisciplines)
 
@@ -50,7 +52,10 @@ class GroupViewSet(GenericViewSet):
 
         if discipline:
             logging.info("Pegando os grupos da disciplina.")
-            return Group.objects.filter(discipline=discipline)
+            if self.request.user == discipline.teacher:
+                return Group.objects.filter(discipline=discipline)
+            else:
+                return Group.objects.filter(discipline=discipline, is_provided=True)
 
         logging.info("Pegando todos os grupos.")
         return Group.objects.all()

@@ -42,8 +42,10 @@ class GenericViewSet(ModelViewSet):
         logging.info(f"Payload: {request.data}")
 
         if self.hasDataKeys():
+            logging.info("Objeto listado com sucesso!")
             return super().list(request, *args, **kwargs)
 
+        logging.info("Objeto criado com sucesso!")
         return super().create(request, *args, **kwargs)
 
     def get_discipline(self):
@@ -52,6 +54,8 @@ class GenericViewSet(ModelViewSet):
         """
 
         disciplineID = self.request.data.get('disciplineID', None)
+        if self.action == 'create':
+            disciplineID = self.request.data.get('discipline', None)
 
         try:
             discipline = Discipline.objects.get(id=disciplineID)

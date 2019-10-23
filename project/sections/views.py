@@ -30,6 +30,8 @@ class SectionViewSet(GenericViewSet):
             permission_classes = (IsAuthenticated, permissions.SeePage)
         elif self.action == 'retrieve':
             permission_classes = (IsAuthenticated, permissions.SeeObjPage)
+        elif self.action == 'create':
+            permission_classes = (IsAuthenticated, permissions.CreateSomethingInYourOwnDisciplines)
         else:
             permission_classes = (IsAuthenticated, permissions.UpdateYourOwnDisciplines)
 
@@ -46,7 +48,10 @@ class SectionViewSet(GenericViewSet):
 
         if discipline:
             logging.info("Pegando os grupos da disciplina.")
-            return Section.objects.filter(discipline=discipline)
+            if self.request.user == discipline.teacher:
+                return Section.objects.filter(discipline=discipline)
+            else:
+                return Section.objects.filter(discipline=discipline, is_closed=False)
 
         logging.info("Pegando todos os grupos.")
         return Section.objects.all()
@@ -80,8 +85,10 @@ class SectionViewSet(GenericViewSet):
 
         section.is_finished = not section.is_finished
 
-        if not section.is_closed:
+        if section.is_finished:
             section.is_closed = True
+        else:
+            section.is_closed = False
 
         section.save()
 
