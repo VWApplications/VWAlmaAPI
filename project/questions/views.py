@@ -43,8 +43,12 @@ class QuestionViewSet(GenericViewSet):
         section = self.get_section()
 
         if section:
-            logging.info("Pegando as questões da seção.")
-            return Question.objects.filter(section=section)
+            if self.request.data.get('test', False):
+                logging.info("Pegando as questões da prova da seção.")
+                return Question.objects.filter(section=section, is_exercise=False)
+            else:
+                logging.info("Pegando as questões da lista de exercício da seção.")
+                return Question.objects.filter(section=section, is_exercise=True)
 
         logging.info("Pegando todas as questões.")
         return Question.objects.all()
