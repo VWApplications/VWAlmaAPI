@@ -90,7 +90,12 @@ class SeePage(BasePermission):
     """
 
     def has_permission(self, request, view):
-        discipline = view.get_discipline()
+        section = view.get_section()
+        if not section:
+            discipline = view.get_discipline()
+        else:
+            discipline = section.discipline
+
         if not discipline:
             return False
 
@@ -112,7 +117,10 @@ class SeeObjPage(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        perm = GenericPermission(request, obj.discipline)
+        try:
+            perm = GenericPermission(request, obj.discipline)
+        except AttributeError:
+            perm = GenericPermission(request, obj.section.discipline)
 
         if perm.is_inside_discipline():
             logging.info("Permitido: Usuário é professor, aluno ou monitor da disciplina.")
@@ -130,7 +138,12 @@ class CreateSomethingInYourOwnDisciplines(BasePermission):
     """
 
     def has_permission(self, request, view):
-        discipline = view.get_discipline()
+        section = view.get_section()
+        if not section:
+            discipline = view.get_discipline()
+        else:
+            discipline = section.discipline
+
         if not discipline:
             return False
 
@@ -151,7 +164,10 @@ class UpdateYourOwnDisciplines(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        perm = GenericPermission(request, obj.discipline)
+        try:
+            perm = GenericPermission(request, obj.discipline)
+        except AttributeError:
+            perm = GenericPermission(request, obj.section.discipline)
 
         if perm.is_owner():
             logging.info("Permitido: Usuário é dono da disciplina.")

@@ -1,6 +1,5 @@
 from common.generic_view import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
-from common.utils import convert_to_json
 from common import permissions
 from . import serializers
 from .models import Question

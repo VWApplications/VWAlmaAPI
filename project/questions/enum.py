@@ -14,7 +14,7 @@ class CorrectAnswerSet(Enum):
     """
     Alternativas corretas:
     V ou F: (TRUE ou FALSE)
-    Multipla escolha: (A, B, C, D) 
+    Multipla escolha: (A, B, C, D)
     """
 
     UNDEFINED = "UNDEFINED"

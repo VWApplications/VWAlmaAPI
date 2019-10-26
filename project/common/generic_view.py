@@ -20,7 +20,7 @@ class GenericViewSet(ModelViewSet):
         """
 
         if ("disciplineID" in self.request.data.keys() or
-            "sessionID" in self.request.data.keys()):
+            "sectionID" in self.request.data.keys()):
             return True
 
         return False
@@ -76,7 +76,7 @@ class GenericViewSet(ModelViewSet):
             sectionID = self.request.data.get('section', None)
 
         try:
-            section = Section.objects.get(id=disciplineID)
+            section = Section.objects.get(id=sectionID)
             logging.info(f"Seção: {convert_to_json(section)}")
         except Section.DoesNotExist:
             return False
