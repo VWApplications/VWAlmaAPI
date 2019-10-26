@@ -2,6 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from common.utils import convert_to_json
 from core.views import CustomPagination
 from disciplines.models import Discipline
+from sections.models import Section
 import logging
 
 
@@ -65,9 +66,19 @@ class GenericViewSet(ModelViewSet):
 
         return discipline
 
-    def get_session(self):
+    def get_section(self):
         """
         Pega a sessão da disciplina passada por parâmetro.
         """
 
-        pass
+        sectionID = self.request.data.get('sectionID', None)
+        if self.action == 'create':
+            sectionID = self.request.data.get('section', None)
+
+        try:
+            section = Section.objects.get(id=disciplineID)
+            logging.info(f"Seção: {convert_to_json(section)}")
+        except Section.DoesNotExist:
+            return False
+
+        return section

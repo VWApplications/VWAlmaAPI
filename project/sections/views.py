@@ -41,19 +41,19 @@ class SectionViewSet(GenericViewSet):
 
     def get_queryset(self):
         """
-        Pega a lista de os grupos de uma determinada disciplina.
+        Pega a lista de seções de uma determinada disciplina.
         """
 
         discipline = self.get_discipline()
 
         if discipline:
-            logging.info("Pegando os grupos da disciplina.")
+            logging.info("Pegando as seções da disciplina.")
             if self.request.user == discipline.teacher:
                 return Section.objects.filter(discipline=discipline)
             else:
                 return Section.objects.filter(discipline=discipline, is_closed=False)
 
-        logging.info("Pegando todos os grupos.")
+        logging.info("Pegando todas as seções.")
         return Section.objects.all()
 
     @action(detail=True, methods=['get'], url_path="provide", url_name="provide")

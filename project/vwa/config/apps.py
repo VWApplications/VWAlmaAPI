@@ -12,7 +12,8 @@ APPS = [
     'core',
     'disciplines',
     'groups',
-    'sections'
+    'sections',
+    'questions'
 ]
 
 EXTERNAL_APPS = [

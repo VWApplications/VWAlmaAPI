@@ -10,7 +10,8 @@ urlpatterns = [
     path('users/', include('accounts.urls')),
     path('disciplines/', include('disciplines.urls')),
     path('groups/', include('groups.urls')),
-    path('sections/', include('sections.urls'))
+    path('sections/', include('sections.urls')),
+    path('questions/', include('questions.urls'))
 ]
 
 if settings.DEBUG:
