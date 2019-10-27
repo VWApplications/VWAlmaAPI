@@ -66,6 +66,7 @@ class QuestionViewSet(GenericViewSet):
         """
 
         alternative_ids = [alternative.id for alternative in question.alternatives.all()]
+        data_ids = [data['id'] for data in alternatives]
 
         counter = 0
         for data in alternatives:
@@ -74,6 +75,10 @@ class QuestionViewSet(GenericViewSet):
 
         if counter != 1:
             raise ParseError(_('You must enter one correct alternative.'))
+
+        for alternative in question.alternatives.all():
+            if alternative.id not in data_ids:
+                alternative.delete()
 
         for data in alternatives:
             if data.get('id', '') in alternative_ids:
