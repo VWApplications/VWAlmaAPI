@@ -1,8 +1,14 @@
 from common.generic_view import GenericViewSet
+from django.utils.translation import ugettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
+from rest_framework.views import status
 from common import permissions
+from common.utils import convert_to_json
+from core.views import QuestionPagination
 from . import serializers
-from .models import Question
+from .models import Question, Alternative
 import logging
 
 
@@ -12,6 +18,7 @@ class QuestionViewSet(GenericViewSet):
     """
 
     serializer_class = serializers.QuestionSerializer
+    pagination_class = QuestionPagination
 
     def get_permissions(self):
         """
@@ -52,3 +59,69 @@ class QuestionViewSet(GenericViewSet):
 
         logging.info("Pegando todas as questões.")
         return Question.objects.all()
+
+    def update_alternatives(self, alternatives, question):
+        """
+        Atualiza as alternativas passadas.
+        """
+
+        alternative_ids = [alternative.id for alternative in question.alternatives.all()]
+
+        counter = 0
+        for data in alternatives:
+            if data['is_correct'] is True:
+                counter += 1
+
+        if counter != 1:
+            raise ParseError(_('You must enter one correct alternative.'))
+
+        for data in alternatives:
+            if data.get('id', '') in alternative_ids:
+                alternative = question.alternatives.get(id=data['id'])
+                alternative.title = data['title']
+
+                if data['is_correct'] is True:
+                    question.alternatives.filter(is_correct=True).update(is_correct=False)
+                    alternative.is_correct = True
+                else:
+                    alternative.is_correct = False
+
+                alternative.is_correct = data['is_correct']
+                alternative.save()
+            else:
+                alternative = Alternative.objects.create(title=data['title'], question=question)
+                question.alternatives.add(alternative)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Atualizando os dados da questão.
+        """
+
+        question = self.get_object()
+
+        logging.info(f"Atualizando a questão {convert_to_json(question)}")
+
+        logging.info(f"Dados de atualização: {request.data}")
+        data = request.data
+
+        if "title" in data.keys():
+            question.title = data['title']
+
+        if "description" in data.keys():
+            question.description = data['description']
+
+        if "is_exercise" in data.keys():
+            question.is_exercise = data['is_exercise']
+
+        if "question_type" in data.keys():
+            question.question_type = data['question_type']
+
+        if "alternatives" in data.keys():
+            alternatives = data.get('alternatives', [])
+            self.update_alternatives(alternatives, question)
+
+        question.save()
+
+        logging.info("Questão atualizada com sucesso!")
+
+        return Response({"success": True}, status=status.HTTP_200_OK)

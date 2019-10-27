@@ -1,7 +1,7 @@
 from django.db import models
 from core.models import BaseModel
 from sections.models import Section
-from questions.enum import TypeSet, CorrectAnswerSet
+from questions.enum import TypeSet
 
 
 class Question(BaseModel):
@@ -17,7 +17,8 @@ class Question(BaseModel):
 
     description = models.TextField(
         "Descrição",
-        help_text="Descrição da seção"
+        help_text="Descrição da seção",
+        blank=True
     )
 
     section = models.ForeignKey(
@@ -40,42 +41,6 @@ class Question(BaseModel):
         help_text="Tipos de questão que podem ser criadas."
     )
 
-    correct_answer = models.CharField(
-        "Resposta correta",
-        max_length=20,
-        choices=[(item.value, item.value) for item in CorrectAnswerSet],
-        default=CorrectAnswerSet.UNDEFINED.value,
-        help_text="Respostas corretas para cada tipo de questão criada."
-    )
-
-    alternative_A = models.CharField(
-        "Alternativa A",
-        max_length=500,
-        help_text="Descrição da alternativa A",
-        blank=True
-    )
-
-    alternative_B = models.CharField(
-        "Alternativa B",
-        max_length=500,
-        help_text="Descrição da alternativa B",
-        blank=True
-    )
-
-    alternative_C = models.CharField(
-        "Alternativa C",
-        max_length=500,
-        help_text="Descrição da alternativa C",
-        blank=True
-    )
-
-    alternative_D = models.CharField(
-        "Alternativa D",
-        max_length=500,
-        help_text="Descrição da alternativa D",
-        blank=True
-    )
-
     def __str__(self):
         """
         Questão no formato string.
@@ -84,4 +49,40 @@ class Question(BaseModel):
         return self.title
 
     class Meta:
+        db_table = "questions"
         ordering = ['title', 'created_at']
+
+
+class Alternative(BaseModel):
+    """
+    Alternativas da questão.
+    """
+
+    title = models.TextField(
+        "Título",
+        help_text="Título da alternativa",
+        blank=True
+    )
+
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name='alternatives'
+    )
+
+    is_correct = models.BooleanField(
+        "É a alternativa correta?",
+        default=False,
+        help_text="Verifica se essa alternativa é a correta."
+    )
+
+    def __str__(self):
+        """
+        Objeto em formato de string
+        """
+
+        return self.title
+
+    class Meta:
+        db_table = "alternatives"
+        ordering = ['created_at']

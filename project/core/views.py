@@ -23,6 +23,16 @@ class CustomPagination(PageNumberPagination):
     max_page_size = 100
 
 
+class QuestionPagination(PageNumberPagination):
+    """
+    Separar a lista de questões em páginas.
+    """
+
+    page_size = 1
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
 class NewsViewSet(ModelViewSet):
     """
     Views de notícias.
