@@ -195,7 +195,7 @@ class UserUploadPhotoView(APIView):
             raise ParseError(_("Empty content."))
 
         img = request.data['photo']
-        filename = self.kwargs['filename']
+        filename = self.kwargs['filename'].replace(" ", "_")
 
         logging.info("Foto {0}: {1}".format(filename, str(img)))
 
