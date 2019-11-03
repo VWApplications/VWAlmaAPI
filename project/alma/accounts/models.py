@@ -14,7 +14,7 @@ class AlmaUser(BaseModel):
     user = models.OneToOneField(
         User,
         on_delete=models.PROTECT,
-        related_name='alma',
+        related_name='alma_user',
     )
 
     identifier = models.CharField(

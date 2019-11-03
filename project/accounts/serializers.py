@@ -161,7 +161,10 @@ class UserRegisterSerializer(ModelSerializer):
 
         logging.info("Validando os dados para criação do usuário.")
 
-        if "email" not in data.keys():
+        if "name" not in data.keys() or not data['name']:
+            raise ParseError(_('name is required.'))
+
+        if "email" not in data.keys() or not data['email']:
             raise ParseError(_('email is required.'))
 
         if "password" not in data.keys():
