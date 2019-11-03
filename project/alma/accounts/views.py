@@ -93,7 +93,7 @@ class UserUploadPhotoView(APIView):
 
         logging.info("Foto {0}: {1}".format(filename, str(img)))
 
-        request.user.photo.save(filename, img, save=True)
+        request.user.alma_user.photo.save(filename, img, save=True)
 
         logging.info("Foto atualizada com sucesso!")
 
@@ -104,5 +104,5 @@ class UserUploadPhotoView(APIView):
         Remove a foto do usuário.
         """
 
-        request.user.photo.delete(save=True)
+        request.user.alma_user.photo.delete(save=True)
         return Response(status=status.HTTP_204_NO_CONTENT)

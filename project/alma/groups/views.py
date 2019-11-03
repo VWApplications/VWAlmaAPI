@@ -1,17 +1,15 @@
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import status
 from common.generic_view import GenericViewSet
 from common.utils import convert_to_json
-from common import permissions
+from alma.core import permissions
+from alma.accounts.models import AlmaUser
 from . import serializers
 from .models import Group
 import logging
-
-User = get_user_model()
 
 
 class GroupViewSet(GenericViewSet):
@@ -52,7 +50,7 @@ class GroupViewSet(GenericViewSet):
 
         if discipline:
             logging.info("Pegando os grupos da disciplina.")
-            if self.request.user == discipline.teacher:
+            if self.request.user.alma_user == discipline.teacher:
                 return Group.objects.filter(discipline=discipline)
             else:
                 return Group.objects.filter(discipline=discipline, is_provided=True)
@@ -96,8 +94,8 @@ class GroupViewSet(GenericViewSet):
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            student = group.discipline.students.get(email=data['email'])
-        except User.DoesNotExist:
+            student = group.discipline.students.get(user__email=data['email'])
+        except AlmaUser.DoesNotExist:
             return Response({"success": False, "detail": _("User is not part of the discipline.")}, status=status.HTTP_400_BAD_REQUEST)
 
         if group.students_limit <= group.students.count():
@@ -130,7 +128,7 @@ class GroupViewSet(GenericViewSet):
 
         try:
             student = group.students.get(id=data['id'])
-        except User.DoesNotExist:
+        except AlmaUser.DoesNotExist:
             return Response({"success": False, "detail": _("User isn't part of the group.")}, status=status.HTTP_400_BAD_REQUEST)
 
         group.students.remove(student)

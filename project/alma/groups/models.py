@@ -1,9 +1,7 @@
-from django.contrib.auth import get_user_model
 from django.db import models
 from common.models import BaseModel
 from alma.disciplines.models import Discipline
-
-User = get_user_model()
+from alma.accounts.models import AlmaUser
 
 
 class Group(BaseModel):
@@ -37,7 +35,7 @@ class Group(BaseModel):
     )
 
     students = models.ManyToManyField(
-        User,
+        AlmaUser,
         verbose_name='Students',
         related_name='student_groups',
         blank=True

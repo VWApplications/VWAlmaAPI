@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.views import status
 from common.utils import convert_to_json
 from common.generic_view import GenericViewSet
-from common import permissions
+from alma.core import permissions
 from . import serializers
 from .models import Section
 import logging
@@ -48,7 +48,7 @@ class SectionViewSet(GenericViewSet):
 
         if discipline:
             logging.info("Pegando as seções da disciplina.")
-            if self.request.user == discipline.teacher:
+            if self.request.user.alma_user == discipline.teacher:
                 return Section.objects.filter(discipline=discipline)
             else:
                 return Section.objects.filter(discipline=discipline, is_closed=False)

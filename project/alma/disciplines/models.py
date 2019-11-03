@@ -1,10 +1,8 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
 from django.db import models
 from common.models import BaseModel
-
-User = get_user_model()
+from alma.accounts.models import AlmaUser
 
 
 class DisciplineManager(models.Manager):
@@ -20,8 +18,8 @@ class DisciplineManager(models.Manager):
 
         return self.get_queryset().exclude(
             models.Q(teacher=user) |
-            models.Q(students__email=user.email) |
-            models.Q(monitors__email=user.email)
+            models.Q(students__user__email=user.email) |
+            models.Q(monitors__user__email=user.email)
         )
 
 
@@ -107,21 +105,21 @@ class Discipline(BaseModel):
     )
 
     teacher = models.ForeignKey(
-        User,
+        AlmaUser,
         on_delete=models.CASCADE,
         verbose_name="Professor",
         related_name="disciplines"
     )
 
     students = models.ManyToManyField(
-        User,
+        AlmaUser,
         verbose_name='Alunos',
         related_name='student_classes',
         blank=True
     )
 
     monitors = models.ManyToManyField(
-        User,
+        AlmaUser,
         verbose_name='Monitores',
         related_name='monitor_classes',
         blank=True

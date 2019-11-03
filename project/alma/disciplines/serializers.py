@@ -1,11 +1,11 @@
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
 from rest_framework.serializers import ModelSerializer, CharField
 from rest_framework.exceptions import ParseError
+from alma.accounts.models import AlmaUser
+from accounts.serializers import UserSerializer
+from common.utils import convert_to_json
 from .models import Discipline
 import logging
-
-User = get_user_model()
 
 
 class UserDisciplineSerializer(ModelSerializer):
@@ -13,9 +13,11 @@ class UserDisciplineSerializer(ModelSerializer):
     Serializado de dados do professor da disciplina.
     """
 
+    user = UserSerializer()
+
     class Meta:
-        model = User
-        fields = ('id', 'short_name', 'email', 'photo', 'identifier', 'permission')
+        model = AlmaUser
+        fields = ('id', 'user', 'photo', 'identifier', 'permission')
 
 
 class DisciplineSerializer(ModelSerializer):
@@ -42,7 +44,7 @@ class DisciplineSerializer(ModelSerializer):
         Pega o usuário logado.
         """
 
-        teacher = self.context['request'].user.id
+        teacher = self.context['request'].user.alma_user.id
 
         return teacher
 
@@ -51,12 +53,12 @@ class DisciplineSerializer(ModelSerializer):
         Cria e retorna uma nova disciplina
         """
 
-        logging.info("Dados para criação da disciplina: " + str(validated_data))
+        logging.info(f"Dados para criação da disciplina: {validated_data}")
 
         try:
-            teacher = User.objects.get(id=self.current_user())
-            logging.info("Professor: " + str(teacher))
-        except User.DoesNotExist as error:
+            teacher = AlmaUser.objects.get(id=self.current_user())
+            logging.info(f"Professor: {convert_to_json(teacher)}")
+        except AlmaUser.DoesNotExist as error:
             logging.error(error)
             raise ParseError(_('Authenticated teacher not found.'))
 

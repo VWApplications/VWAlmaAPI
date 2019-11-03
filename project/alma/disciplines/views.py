@@ -1,5 +1,4 @@
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -9,6 +8,7 @@ from rest_framework.views import status
 from common.utils import convert_to_json
 from common.generic_view import CustomPagination
 from alma.accounts.enum import AlmaPermissionSet
+from alma.accounts.models import AlmaUser
 from .permissions import (
     OnlyLoggedTeacherCanCreateDiscipline, EnterDiscipline,
     UpdateYourOwnDisciplines, SearchDiscipline, SeeDiscipline
@@ -16,8 +16,6 @@ from .permissions import (
 from . import serializers
 from .models import Discipline
 import logging
-
-User = get_user_model()
 
 
 class DisciplineViewSet(ModelViewSet):
@@ -77,13 +75,13 @@ class DisciplineViewSet(ModelViewSet):
         logging.info("Buscando as disciplinas")
 
         if self.action == "list":
-            if self.request.user.permission == AlmaPermissionSet.TEACHER.value:
+            if self.request.user.alma_user.permission == AlmaPermissionSet.TEACHER.value:
                 queryset = self.filter_teacher_disciplines()
             else:
                 queryset = self.filter_student_disciplines()
 
         elif self.action == "search_discipline":
-            queryset = Discipline.objects.available(self.request.user)
+            queryset = Discipline.objects.available(self.request.user.alma_user)
         else:
             queryset = Discipline.objects.all()
 
@@ -97,7 +95,7 @@ class DisciplineViewSet(ModelViewSet):
         logging.info("Buscando as disciplinas do professor")
 
         created_disciplines = Discipline.objects.filter(
-            teacher=self.request.user
+            teacher=self.request.user.alma_user
         )
 
         logging.info(f"Disciplinas criadas: {convert_to_json(created_disciplines)}")
@@ -112,13 +110,13 @@ class DisciplineViewSet(ModelViewSet):
         logging.info("Buscando as disciplinas do estudante.")
 
         student_disciplines = Discipline.objects.filter(
-            students=self.request.user
+            students=self.request.user.alma_user
         )
 
         logging.info(f"Disciplinas como estudante: {convert_to_json(student_disciplines)}")
 
         monitor_disciplines = Discipline.objects.filter(
-            monitors=self.request.user
+            monitors=self.request.user.alma_user
         )
 
         logging.info(f"Disciplinas como monitor: {convert_to_json(monitor_disciplines)}")
@@ -161,7 +159,7 @@ class DisciplineViewSet(ModelViewSet):
             elif ordered == "discipline":
                 disciplines = disciplines.order_by('title')
             elif ordered == "teacher":
-                disciplines = disciplines.order_by('teacher__name')
+                disciplines = disciplines.order_by('teacher__user__name')
 
         if searched:
             disciplines = disciplines.filter(
@@ -169,7 +167,7 @@ class DisciplineViewSet(ModelViewSet):
                 Q(course__icontains=searched) |
                 Q(classroom__icontains=searched) |
                 Q(institution__icontains=searched) |
-                Q(teacher__name__icontains=searched)
+                Q(teacher__user__name__icontains=searched)
             )
 
         logging.info(f"Disciplinas filtradas: {disciplines}")
@@ -187,7 +185,7 @@ class DisciplineViewSet(ModelViewSet):
 
         logging.info("Entrando na disciplina.")
 
-        logging.info(f"Payload: pk={pk}, data={request.data} e student={request.user}")
+        logging.info(f"Payload: pk={pk}, data={request.data} e student={request.user.alma_user}")
         password = request.data['password']
 
         discipline = self.get_object()
@@ -201,7 +199,7 @@ class DisciplineViewSet(ModelViewSet):
             if discipline.is_closed:
                 return Response({"success": False, "detail": _("The discipline is closed.")}, status=status.HTTP_400_BAD_REQUEST)
 
-            discipline.students.add(request.user)
+            discipline.students.add(request.user.alma_user)
             logging.info(f"Lista de estudantes atualizada: {convert_to_json(discipline.students.all())}")
         else:
             logging.warn("Senha incorreta.")
@@ -323,8 +321,8 @@ class DisciplineViewSet(ModelViewSet):
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            student = User.objects.get(email=data['email'])
-        except User.DoesNotExist:
+            student = AlmaUser.objects.get(user__email=data['email'])
+        except AlmaUser.DoesNotExist:
             return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
 
         if student in discipline.students.all():
@@ -355,8 +353,8 @@ class DisciplineViewSet(ModelViewSet):
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            student = User.objects.get(id=data['id'])
-        except User.DoesNotExist:
+            student = AlmaUser.objects.get(user__id=data['id'])
+        except AlmaUser.DoesNotExist:
             return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
 
         if student not in discipline.students.all() and student not in discipline.monitors.all():
@@ -390,8 +388,8 @@ class DisciplineViewSet(ModelViewSet):
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            student = User.objects.get(id=data['id'])
-        except User.DoesNotExist:
+            student = AlmaUser.objects.get(user__id=data['id'])
+        except AlmaUser.DoesNotExist:
             return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
 
         if student not in discipline.students.all() and student not in discipline.monitors.all():
