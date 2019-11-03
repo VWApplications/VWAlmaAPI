@@ -7,14 +7,15 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-APPS = [
-    'accounts',
-    'core',
-    'disciplines',
-    'groups',
-    'sections',
-    'questions'
+ALMA_APPS = [
+    'alma.core',
+    'alma.disciplines',
+    'alma.groups',
+    'alma.sections',
+    'alma.questions'
 ]
+
+APPS = ['accounts', 'common']
 
 EXTERNAL_APPS = [
     'rest_framework',
@@ -22,4 +23,4 @@ EXTERNAL_APPS = [
     "anymail"
 ]
 
-INSTALLED_APPS = DJANGO_APPS + APPS + EXTERNAL_APPS
+INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + APPS + ALMA_APPS

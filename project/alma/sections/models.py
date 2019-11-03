@@ -1,6 +1,6 @@
-from core.models import BaseModel
 from django.db import models
-from disciplines.models import Discipline
+from common.models import BaseModel
+from alma.disciplines.models import Discipline
 
 
 class Section(BaseModel):

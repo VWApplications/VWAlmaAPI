@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from accounts.models import User
-from core.models import News
+from alma.core.models import News
 
 
 class CreateNewsTestCase(APITestCase):

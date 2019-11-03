@@ -1,20 +1,20 @@
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import get_user_model
+from django.db.models import Q
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import status
-from django.contrib.auth import get_user_model
 from common.utils import convert_to_json
+from common.generic_view import CustomPagination
 from accounts.enum import PermissionSet
-from core.views import CustomPagination
 from .permissions import (
     OnlyLoggedTeacherCanCreateDiscipline, EnterDiscipline,
     UpdateYourOwnDisciplines, SearchDiscipline, SeeDiscipline
 )
 from . import serializers
 from .models import Discipline
-from django.db.models import Q
 import logging
 
 User = get_user_model()

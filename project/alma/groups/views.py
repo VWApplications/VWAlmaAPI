@@ -1,13 +1,13 @@
 from django.utils.translation import ugettext_lazy as _
-from common.generic_view import GenericViewSet
+from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import status
-from django.contrib.auth import get_user_model
+from common.generic_view import GenericViewSet
 from common.utils import convert_to_json
-from . import serializers
 from common import permissions
+from . import serializers
 from .models import Group
 import logging
 

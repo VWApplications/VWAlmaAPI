@@ -1,8 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ParseError
 from rest_framework import serializers
-from .models import Question, Alternative
 from common.utils import convert_to_json
+from .models import Question, Alternative
 import logging
 
 

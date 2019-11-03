@@ -43,7 +43,7 @@ images:
 	# Lista todas as imagens
 	docker images
 
-container := "alma"
+container := "vwapp"
 
 bash:
 	# Entra no terminal do container

@@ -1,8 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from core.models import BaseModel
-
-from disciplines.models import Discipline
+from common.models import BaseModel
+from alma.disciplines.models import Discipline
 
 User = get_user_model()
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from disciplines.serializers import UserDisciplineSerializer
+from alma.disciplines.serializers import UserDisciplineSerializer
 from .models import Group
 
 

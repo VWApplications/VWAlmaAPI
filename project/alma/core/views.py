@@ -1,36 +1,16 @@
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.views import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
-from rest_framework.pagination import PageNumberPagination
+from common.generic_view import CustomPagination
 from common.email import send_email_template
-from django.conf import settings
 from .serializers import NewsTagsSerializer, TagSerializer
 from .models import News, Tag
 from .permissions import CreateUpdateDestroyAdminPermission
 import logging
-
-
-class CustomPagination(PageNumberPagination):
-    """
-    Separar a lista em páginas.
-    """
-
-    page_size = 5
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
-
-class QuestionPagination(PageNumberPagination):
-    """
-    Separar a lista de questões em páginas.
-    """
-
-    page_size = 1
-    page_size_query_param = 'page_size'
-    max_page_size = 100
 
 
 class NewsViewSet(ModelViewSet):

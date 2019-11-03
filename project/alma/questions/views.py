@@ -1,12 +1,11 @@
-from common.generic_view import GenericViewSet
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.views import status
+from common.generic_view import GenericViewSet, QuestionPagination
 from common import permissions
 from common.utils import convert_to_json
-from core.views import QuestionPagination
 from . import serializers
 from .models import Question, Alternative
 import logging

@@ -2,34 +2,34 @@ version: '3'
 services:
   postgres:
     image: postgres:latest
-    container_name: alma_postgres
+    container_name: vwapp_postgres
     volumes:
       - ./.ignore/postgres:/var/lib/postgresql/data
       - ./backup:/backup
     environment:
-      - POSTGRES_PASSWORD=alma
-      - POSTGRES_USER=alma
-      - POSTGRES_DB=alma_db
+      - POSTGRES_PASSWORD=vwapp
+      - POSTGRES_USER=vwapp
+      - POSTGRES_DB=vwapp_db
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: alma_pgadmin
+    container_name: vwapp_pgadmin
     ports:
       - "5433:80"
     environment:
       - PGADMIN_DEFAULT_EMAIL=victorhad@gmail.com
-      - PGADMIN_DEFAULT_PASSWORD=alma
+      - PGADMIN_DEFAULT_PASSWORD=vwapp
     volumes:
       - ./.ignore/var/lib/pgadmin:/var/lib/pgadmin
 
-  alma:
-    image: vwapp/alma:latest
-    container_name: alma
+  vwapp:
+    image: victorhad/vwapp:latest
+    container_name: vwapp
     build: .
     environment:
-      - POSTGRES_DB=alma_db
-      - POSTGRES_USER=alma
-      - POSTGRES_PASSWORD=alma
+      - POSTGRES_DB=vwapp_db
+      - POSTGRES_USER=vwapp
+      - POSTGRES_PASSWORD=vwapp
       - POSTGRES_HOST=postgres
     volumes:
       - ./project/:/software

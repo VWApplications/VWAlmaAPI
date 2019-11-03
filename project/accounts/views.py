@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import get_user_model
 from rest_framework.views import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -11,7 +12,6 @@ from accounts.models import PasswordReset
 from accounts.utils import generate_hash_key
 from common.email import send_email_template
 from . import serializers, permissions
-from django.contrib.auth import get_user_model
 import logging
 
 User = get_user_model()

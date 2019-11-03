@@ -1,8 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
-from accounts.enum import PermissionSet
 from rest_framework import status
 from rest_framework.test import APITestCase
+from accounts.enum import PermissionSet
 from accounts.models import User
 
 

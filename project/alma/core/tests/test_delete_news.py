@@ -1,8 +1,8 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from core.models import News
 from accounts.models import User
+from alma.core.models import News
 
 
 class DeleteNewsTestCase(APITestCase):

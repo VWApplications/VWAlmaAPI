@@ -1,7 +1,7 @@
 from django.db import models
-from core.models import BaseModel
-from sections.models import Section
-from questions.enum import TypeSet
+from common.models import BaseModel
+from alma.sections.models import Section
+from .enum import TypeSet
 
 
 class Question(BaseModel):

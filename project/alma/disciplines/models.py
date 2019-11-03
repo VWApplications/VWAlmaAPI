@@ -2,7 +2,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db import models
-from core.models import BaseModel
+from common.models import BaseModel
 
 User = get_user_model()
 

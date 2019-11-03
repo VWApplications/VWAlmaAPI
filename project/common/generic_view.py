@@ -1,9 +1,29 @@
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
 from common.utils import convert_to_json
-from core.views import CustomPagination
-from disciplines.models import Discipline
-from sections.models import Section
+from alma.disciplines.models import Discipline
+from alma.sections.models import Section
 import logging
+
+
+class CustomPagination(PageNumberPagination):
+    """
+    Separar a lista em páginas.
+    """
+
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class QuestionPagination(PageNumberPagination):
+    """
+    Separar a lista de questões em páginas.
+    """
+
+    page_size = 1
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 
 class GenericViewSet(ModelViewSet):
