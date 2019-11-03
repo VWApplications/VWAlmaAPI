@@ -10,16 +10,16 @@ class DisciplineManager(models.Manager):
     Crie um conjunto de consultas personalizado da disciplina.
     """
 
-    def available(self, user):
+    def available(self, alma_user):
         """
         Remova do conjunto de consultas a disciplina que o professor é proprietário,
         alunos e monitores que estão dentro da disciplina e disciplinas fechadas.
         """
 
         return self.get_queryset().exclude(
-            models.Q(teacher=user) |
-            models.Q(students__user__email=user.email) |
-            models.Q(monitors__user__email=user.email)
+            models.Q(teacher=alma_user) |
+            models.Q(students__user__email=alma_user.user.email) |
+            models.Q(monitors__user__email=alma_user.user.email)
         )
 
 

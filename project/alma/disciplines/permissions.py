@@ -29,7 +29,7 @@ class SearchDiscipline(BasePermission):
 
     def has_permission(self, request, view):
         alma_perm = GenericAlmaPermission(request)
-        generic_perm = GenericAlmaPermission(request)
+        generic_perm = GenericPermission(request)
 
         if generic_perm.is_read_mode() and not alma_perm.is_teacher():
             logging.info("Permitido: Modo leitura e usuário estudante.")

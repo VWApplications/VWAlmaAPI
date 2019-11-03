@@ -353,7 +353,7 @@ class DisciplineViewSet(ModelViewSet):
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            student = AlmaUser.objects.get(user__id=data['id'])
+            student = AlmaUser.objects.get(id=data['id'])
         except AlmaUser.DoesNotExist:
             return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -388,7 +388,7 @@ class DisciplineViewSet(ModelViewSet):
             return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            student = AlmaUser.objects.get(user__id=data['id'])
+            student = AlmaUser.objects.get(id=data['id'])
         except AlmaUser.DoesNotExist:
             return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
 

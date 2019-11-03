@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ParseError
-from rest_framework.serializers import ModelSerializer, CharField, Serializer
+from rest_framework.serializers import ModelSerializer
 from accounts.serializers import UserSerializer, UserRegisterSerializer
 from .models import AlmaUser
 import logging

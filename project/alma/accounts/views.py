@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.views import status, APIView
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser
@@ -69,6 +70,17 @@ class AlmaUserViewSet(ModelViewSet):
         logging.info(f"Permissões disparadas: {permission_classes}")
 
         return [permission() for permission in permission_classes]
+
+    @action(detail=False, methods=['get'], url_path="current_user", url_name="current-user")
+    def current_user(self, request):
+        """
+        Pega o usuário autenticado na plataforma ALMA.
+        """
+
+        logging.info(f"Pegando o usuário logado: {request.user.alma_user}")
+
+        serializer = self.get_serializer(request.user.alma_user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserUploadPhotoView(APIView):
