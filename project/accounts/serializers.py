@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ParseError
-from rest_framework.serializers import ModelSerializer, Serializer, CharField, DateTimeField
+from rest_framework.serializers import ModelSerializer, Serializer, CharField
 import logging
 
 User = get_user_model()
@@ -16,8 +16,7 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = (
             'id', 'email', 'name', 'short_name',
-            'photo', 'last_login', 'permission',
-            'created_at', 'updated_at_formated', 'identifier'
+            'created_at', 'updated_at_formated'
         )
 
     def update(self, instance, validated_data):
@@ -25,8 +24,8 @@ class UserSerializer(ModelSerializer):
         Atualiza os dados do usuário
         """
 
-        logging.info("Instancia para atualização: " + str(instance))
-        logging.info("Dados para atualização: " + str(validated_data))
+        logging.info(f"Instancia para atualização: {instance}")
+        logging.info(f"Dados para atualização: {validated_data}")
 
         if "email" in validated_data.keys():
             if validated_data['email'] != instance.email and User.objects.filter(email=validated_data['email']).exists():
@@ -36,15 +35,6 @@ class UserSerializer(ModelSerializer):
 
         if "name" in validated_data.keys():
             instance.name = validated_data['name']
-
-        if "identifier" in validated_data.keys():
-            instance.identifier = validated_data['identifier']
-
-        if "permission" in validated_data.keys():
-            instance.permission = validated_data['permission']
-
-        if 'photo' in validated_data.keys():
-            instance.photo = validated_data['photo']
 
         instance.save()
 
@@ -69,7 +59,7 @@ class UserPasswordSerializer(Serializer):
         Atualiza a senha do usuário.
         """
 
-        logging.info("Instancia para atualização: " + str(instance))
+        logging.info(f"Instancia para atualização: {instance}")
 
         if "password" not in validated_data.keys():
             raise ParseError(_('Old password is required.'))
@@ -115,7 +105,7 @@ class ResetPasswordSerializer(Serializer):
         Atualiza a senha do usuário.
         """
 
-        logging.info("Instancia para atualização: " + str(instance))
+        logging.info(f"Instancia para atualização: {instance}")
 
         reset = validated_data['reset']
 
@@ -155,14 +145,12 @@ class UserRegisterSerializer(ModelSerializer):
 
     confirm_password = CharField(write_only=True, style={'input_type': 'password'})
 
-    last_login = DateTimeField(read_only=True)
-
     class Meta:
         model = User
         fields = (
-            'id', 'name', 'email', 'short_name', 'permission',
-            'photo', 'last_login', 'created_at',
-            'updated_at', 'password', 'confirm_password'
+            'id', 'name', 'email', 'short_name',
+            'created_at', 'updated_at', 'password',
+            'confirm_password'
         )
 
     def validate(self, data):
@@ -202,18 +190,12 @@ class UserRegisterSerializer(ModelSerializer):
         Cria e retorna um novo usuário
         """
 
-        logging.info("Dados para criação do usuário: " + str(validated_data))
+        logging.info(f"Dados para criação do usuário: {validated_data}")
 
         user = User(
             email=validated_data['email'],
             name=validated_data['name']
         )
-
-        if "permission" in validated_data.keys():
-            user.permission = validated_data['permission']
-
-        if 'photo' in validated_data.keys():
-            user.photo = validated_data['photo']
 
         user.set_password(validated_data['password'])
 

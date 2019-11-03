@@ -1,5 +1,5 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
-from accounts.enum import PermissionSet
+from alma.accounts.enum import AlmaPermissionSet
 import logging
 
 
@@ -43,7 +43,7 @@ class GenericPermission:
         Verifique se o usuário conectado é professor.
         """
 
-        return self.request.user.permission == PermissionSet.TEACHER.value
+        return self.request.user.permission == AlmaPermissionSet.TEACHER.value
 
     def is_discipline_student(self):
         """

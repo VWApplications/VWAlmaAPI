@@ -8,6 +8,7 @@ DJANGO_APPS = [
 ]
 
 ALMA_APPS = [
+    'alma.accounts',
     'alma.core',
     'alma.disciplines',
     'alma.groups',

@@ -8,7 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.views import status
 from common.utils import convert_to_json
 from common.generic_view import CustomPagination
-from accounts.enum import PermissionSet
+from alma.accounts.enum import AlmaPermissionSet
 from .permissions import (
     OnlyLoggedTeacherCanCreateDiscipline, EnterDiscipline,
     UpdateYourOwnDisciplines, SearchDiscipline, SeeDiscipline
@@ -77,7 +77,7 @@ class DisciplineViewSet(ModelViewSet):
         logging.info("Buscando as disciplinas")
 
         if self.action == "list":
-            if self.request.user.permission == PermissionSet.TEACHER.value:
+            if self.request.user.permission == AlmaPermissionSet.TEACHER.value:
                 queryset = self.filter_teacher_disciplines()
             else:
                 queryset = self.filter_student_disciplines()

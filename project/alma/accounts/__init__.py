@@ -1,0 +1,1 @@
+default_app_config = "alma.accounts.apps.AlmaAccountsConfig"

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class PermissionSet(Enum):
+class AlmaPermissionSet(Enum):
     """
     Lista de permissões do usuário
     """

@@ -46,5 +46,5 @@ class Section(BaseModel):
         return '{0}'.format(self.title)
 
     class Meta:
-        db_table = "sections"
+        db_table = "alma_sections"
         ordering = ['title', 'created_at']

@@ -1,11 +1,8 @@
-from django.db import models
-from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from django.utils import timezone
-from accounts.enum import PermissionSet
-from django.contrib.auth.models import (
-    AbstractBaseUser, PermissionsMixin, BaseUserManager
-)
+from django.db import models
 
 
 class UserProfileManager(BaseUserManager):
@@ -48,7 +45,6 @@ class UserProfileManager(BaseUserManager):
         # Insere previlégios de superuser
         user.is_superuser = True
         user.is_staff = True
-        user.permission = PermissionSet.ADMIN.value
 
         user.save(using=self._db)
 
@@ -67,31 +63,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         unique=True
     )
 
-    identifier = models.CharField(
-        "Mátricula",
-        help_text="Identificador dentro de sua universidade",
-        max_length=50,
-        blank=True
-    )
-
     name = models.CharField(
         'Nome',
         help_text="Nome completo do usuário.",
         max_length=150
-    )
-
-    photo = models.ImageField(
-        upload_to='accounts',
-        help_text="Foto do usuário",
-        blank=True,
-        null=True
-    )
-
-    permission = models.CharField(
-        "Permissão.",
-        help_text="Verifica o tipo de permissão que o usuário tem.",
-        max_length=50,
-        default=PermissionSet.STUDENT.value
     )
 
     # Ao inves de deletar usuários, você pode desativa-los.

@@ -51,5 +51,5 @@ class Group(BaseModel):
         return self.title
 
     class Meta:
-        db_table = "groups"
+        db_table = "alma_groups"
         ordering = ['title', 'created_at']

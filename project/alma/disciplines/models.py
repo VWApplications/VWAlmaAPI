@@ -147,5 +147,5 @@ class Discipline(BaseModel):
         return self.get_discipline_url()
 
     class Meta:
-        db_table = "disciplines"
+        db_table = "alma_disciplines"
         ordering = ['title', 'created_at']

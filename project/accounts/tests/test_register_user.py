@@ -2,7 +2,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from accounts.enum import PermissionSet
 from accounts.models import User
 
 
@@ -28,7 +27,6 @@ class CreateUserTestCase(APITestCase):
         )
         self.data = {
             'name': 'Fulano de Tal',
-            'permission': PermissionSet.TEACHER.value,
             'email': 'fulano@gmail.com',
             'password': 'fulano123456',
             'confirm_password': 'fulano123456'
@@ -49,17 +47,6 @@ class CreateUserTestCase(APITestCase):
         """
 
         self.assertEqual(User.objects.count(), 2)
-        response = self.client.post(self.url, self.data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(User.objects.count(), 3)
-
-    def test_valid_create_student_user(self):
-        """
-        Create a new user in the system.
-        """
-
-        self.assertEqual(User.objects.count(), 2)
-        self.data['permission'] = PermissionSet.STUDENT.value
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 3)

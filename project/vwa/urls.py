@@ -7,11 +7,7 @@ urlpatterns = [
     path('api-token/', jwt_views.TokenObtainPairView.as_view(), name='login'),
     path('refresh-token/', jwt_views.TokenRefreshView.as_view(), name='login'),
     path('users/', include('accounts.urls')),
-    path('', include('alma.core.urls')),
-    path('disciplines/', include('alma.disciplines.urls')),
-    path('groups/', include('alma.groups.urls')),
-    path('sections/', include('alma.sections.urls')),
-    path('questions/', include('alma.questions.urls'))
+    path('alma/', include('alma.urls'))
 ]
 
 if settings.DEBUG:

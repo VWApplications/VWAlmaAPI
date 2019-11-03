@@ -9,7 +9,10 @@ class UpdateOwnProfile(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        perm = GenericPermission(request, obj)
+        if hasattr(obj, "user"):
+            perm = GenericPermission(request, obj.user)
+        else:
+            perm = GenericPermission(request, obj)
 
         if perm.is_read_mode():
             logging.info("Permitido: Modo leitura.")

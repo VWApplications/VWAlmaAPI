@@ -60,5 +60,5 @@ class News(BaseModel):
         return self.title
 
     class Meta:
-        db_table = "news"
+        db_table = "alma_news"
         ordering = ('created_at', 'title')

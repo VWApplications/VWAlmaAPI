@@ -49,7 +49,7 @@ class Question(BaseModel):
         return self.title
 
     class Meta:
-        db_table = "questions"
+        db_table = "alma_questions"
         ordering = ['title', 'created_at']
 
 
@@ -84,5 +84,5 @@ class Alternative(BaseModel):
         return self.title
 
     class Meta:
-        db_table = "alternatives"
+        db_table = "alma_alternatives"
         ordering = ['created_at']

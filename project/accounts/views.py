@@ -4,10 +4,8 @@ from rest_framework.views import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
-from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.views import APIView
 from accounts.models import PasswordReset
 from accounts.utils import generate_hash_key
 from common.email import send_email_template
@@ -32,17 +30,17 @@ class UserViewSet(ModelViewSet):
         name = self.request.query_params.get('name', None)
         email = self.request.query_params.get('email', None)
 
-        logging.info("Query Parametros: " + str({"name": name, "email": email}))
+        logging.info("Query Parametros: " + str({'name': name, 'email': email}))
 
         users = User.objects.all()
 
         if name:
             users = users.filter(name__icontains=name)
-            logging.info("Filtrando por nome: " + str(users))
+            logging.info(f"Filtrando por nome: {users}")
 
         if email:
             users = users.filter(email__icontains=email)
-            logging.info("Filtrando por email: " + str(users))
+            logging.info(f"Filtrando por email: {users}")
 
         return users
 
@@ -54,7 +52,7 @@ class UserViewSet(ModelViewSet):
         ações: list, create, destroy, retrieve, update, partial_update
         """
 
-        logging.info("Action disparada: " + str(self.action))
+        logging.info(f"Action disparada: {self.action}")
 
         if self.action == 'list' or self.action == 'create':
             logging.info("Entrando no UserRegisterSerializer.")
@@ -83,7 +81,7 @@ class UserViewSet(ModelViewSet):
         else:
             permission_classes = (IsAuthenticated, permissions.UpdateOwnProfile)
 
-        logging.info("Permissões disparadas: " + str(permission_classes))
+        logging.info(f"Permissões disparadas: {permission_classes}")
 
         return [permission() for permission in permission_classes]
 
@@ -132,7 +130,7 @@ class UserViewSet(ModelViewSet):
             reset = PasswordReset.objects.get(key=request.data['key'])
         except PasswordReset.DoesNotExist as error:
             logging.error(error)
-            logging.warning("Não foi possível encontrar o usuário da chave passada: " + str(request.data['key']))
+            logging.warning(f"Não foi possível encontrar o usuário da chave passada: {request.data['key']}")
             raise ParseError(_("Invalid key."))
 
         data = {
@@ -154,7 +152,7 @@ class UserViewSet(ModelViewSet):
         Pega o usuário autenticado.
         """
 
-        logging.info("Pegando o usuário logado: " + str(request.user))
+        logging.info(f"Pegando o usuário logado: {request.user}")
 
         serializer = self.get_serializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -167,7 +165,7 @@ class UserViewSet(ModelViewSet):
 
         logging.info("Atualizando senha do usuário")
 
-        logging.info("Usuário: " + str(request.user))
+        logging.info(f"Usuário: {request.user}")
 
         serializer = self.get_serializer(request.user, data=request.data, partial=False)
         if serializer.is_valid():
@@ -175,40 +173,3 @@ class UserViewSet(ModelViewSet):
             return Response({'success': True}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserUploadPhotoView(APIView):
-    """
-    Classe reponsável por armazenar a foto do usuário.
-    """
-
-    parser_class = (FileUploadParser,)
-
-    def put(self, request, *args, **kwargs):
-        """
-        Requisição para armazenar o arquivo.
-        """
-
-        logging.info("Atualizando a foto do usuário")
-
-        if 'photo' not in request.data:
-            raise ParseError(_("Empty content."))
-
-        img = request.data['photo']
-        filename = self.kwargs['filename'].replace(" ", "_")
-
-        logging.info("Foto {0}: {1}".format(filename, str(img)))
-
-        request.user.photo.save(filename, img, save=True)
-
-        logging.info("Foto atualizada com sucesso!")
-
-        return Response(status=status.HTTP_201_CREATED)
-
-    def delete(self, request, *args, **kwargs):
-        """
-        Remove a foto do usuário.
-        """
-
-        request.user.photo.delete(save=True)
-        return Response(status=status.HTTP_204_NO_CONTENT)
