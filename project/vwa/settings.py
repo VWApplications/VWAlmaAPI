@@ -5,15 +5,16 @@ import logging
 # Debug
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-try:
-    logging.basicConfig(
-        filename='vwa/alma.log',
-        filemode='a',
-        format='[%(asctime)s] [%(levelname)s] [%(pathname)s - %(funcName)s - %(lineno)d]: %(message)s',
-        level=logging.INFO
-    )
-except Exception as error:
-    print(error)
+if DEBUG:
+    try:
+        logging.basicConfig(
+            filename='vwa/alma.log',
+            filemode='a',
+            format='[%(asctime)s] [%(levelname)s] [%(pathname)s - %(funcName)s - %(lineno)d]: %(message)s',
+            level=logging.INFO
+        )
+    except Exception as error:
+        print(error)
 
 # Permitir que todo host/domínio acesse este aplicativo
 ALLOWED_HOSTS = ['*']

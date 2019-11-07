@@ -25,7 +25,8 @@ GENERIC_APPS = ['common']
 EXTERNAL_APPS = [
     'rest_framework',
     'corsheaders',
-    "anymail"
+    'anymail',
+    'storages'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + ACCOUNTS_APPS + GENERIC_APPS + ALMA_APPS
