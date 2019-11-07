@@ -7,6 +7,7 @@ from common.generic_view import GenericViewSet, QuestionPagination
 from alma.core import permissions
 from common.utils import convert_to_json
 from . import serializers
+from .enum import TypeSet
 from .models import Question, Alternative
 import logging
 
@@ -72,7 +73,7 @@ class QuestionViewSet(GenericViewSet):
             if data['is_correct'] is True:
                 counter += 1
 
-        if counter != 1:
+        if question.question_type != TypeSet.V_OR_F.value and counter != 1:
             raise ParseError(_('You must enter one correct alternative.'))
 
         for alternative in question.alternatives.all():
