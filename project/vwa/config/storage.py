@@ -12,6 +12,6 @@ if config('DEBUG', default=True, cast=bool) is False:
 
     AWS_LOCATION = "media"
     AWS_S3_FILE_OVERWRITE = False
-    AWS_DEFAULT_ACL = None
+    AWS_DEFAULT_ACL = 'public-read'
 
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

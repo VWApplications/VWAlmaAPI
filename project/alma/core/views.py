@@ -83,13 +83,13 @@ class ContactViewSet(APIView):
         send_email_template(
             subject=_('Contact from ALMA Plataform'),
             template='email.html',
-            from_email="mailgun@sandbox43d3bc2d2ec44a6688b52d324f1f7cb3.mailgun.org",
+            from_email=request.data['email'],
             context={
                 'name': request.data['name'],
                 'email': request.data['email'],
                 'message': request.data['message']
             },
-            recipient_list=[settings.DEFAULT_FROM_EMAIL]
+            recipient_list=["vwapplication@gmail.com"]
         )
 
         logging.info("Email enviado com sucesso!")
