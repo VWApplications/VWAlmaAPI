@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ParseError
 from rest_framework import serializers
 from common.utils import convert_to_json
@@ -38,10 +37,10 @@ class QuestionSerializer(serializers.ModelSerializer):
         logging.info("Validando os dados para criação da questão.")
 
         if "alternatives" not in data.keys():
-            raise ParseError(_('Field alternatives is required.'))
+            raise ParseError("As alternativas são obrigatórias.")
 
         if not data['alternatives']:
-            raise ParseError(_('Empty alternatives.'))
+            raise ParseError("Alternativas vazias.")
 
         counter = 0
         for alternative in data.get('alternatives', []):
@@ -49,7 +48,7 @@ class QuestionSerializer(serializers.ModelSerializer):
                 counter += 1
 
         if counter != 1:
-            raise ParseError(_('You must enter one correct alternative.'))
+            raise ParseError("Você deve entrar com uma alternativa correta.")
 
         return data
 

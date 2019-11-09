@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ParseError
 from rest_framework.serializers import ModelSerializer
@@ -32,7 +31,7 @@ class AlmaUserSerializer(ModelSerializer):
         logging.info("Validando os dados para atualização do usuário na plataforma ALMA.")
 
         if "user" not in data.keys():
-            raise ParseError(_('User object is required.'))
+            raise ParseError("Objeto user é obrigatório.")
 
         return data
 
@@ -87,7 +86,7 @@ class AlmaUserRegisterSerializer(ModelSerializer):
         logging.info("Validando os dados para criação do usuário na plataforma ALMA.")
 
         if "user" not in data.keys():
-            raise ParseError(_('User object is required.'))
+            raise ParseError("Objeto user é obrigatório.")
 
         return data
 

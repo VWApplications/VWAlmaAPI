@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from rest_framework.views import status, APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -98,7 +97,7 @@ class UserUploadPhotoView(APIView):
         logging.info("Atualizando a foto do usuário")
 
         if 'photo' not in request.data:
-            raise ParseError(_("Empty content."))
+            raise ParseError("Conteúdo da foto vazio.")
 
         img = request.data['photo']
         filename = self.kwargs['filename'].replace(" ", "_")

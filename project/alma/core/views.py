@@ -1,5 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.views import status
@@ -71,17 +69,17 @@ class ContactViewSet(APIView):
         logging.info("Payload: " + str(request.data))
 
         if "email" not in request.data:
-            raise ParseError(_("Email is required."))
+            raise ParseError("Email é obrigatório.")
 
         if "name" not in request.data:
-            raise ParseError(_("Name is required."))
+            raise ParseError("Nome é obrigatório.")
 
         if "message" not in request.data:
-            raise ParseError(_("Message is required."))
+            raise ParseError("Mensagem é obrigatório.")
 
         # Envia o email
         send_email_template(
-            subject=_('Contact from ALMA Plataform'),
+            subject="Mensagem da plataforma ALMA.",
             template='email.html',
             from_email=request.data['email'],
             context={

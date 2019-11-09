@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from rest_framework.serializers import ModelSerializer, CharField
 from rest_framework.exceptions import ParseError
 from alma.accounts.models import AlmaUser
@@ -60,7 +59,7 @@ class DisciplineSerializer(ModelSerializer):
             logging.info(f"Professor: {convert_to_json(teacher)}")
         except AlmaUser.DoesNotExist as error:
             logging.error(error)
-            raise ParseError(_('Authenticated teacher not found.'))
+            raise ParseError("Professor não encontrado.")
 
         discipline = Discipline.objects.create(
             **validated_data,

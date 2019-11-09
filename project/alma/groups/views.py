@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -91,19 +90,19 @@ class GroupViewSet(GenericViewSet):
         logging.info(f"Payload: {data}")
 
         if "email" not in data.keys():
-            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Dados de entrada incorretos."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             student = group.discipline.students.get(user__email=data['email'])
         except AlmaUser.DoesNotExist:
-            return Response({"success": False, "detail": _("User is not part of the discipline.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Usuário não faz parte da disciplina"}, status=status.HTTP_400_BAD_REQUEST)
 
         if group.students_limit <= group.students.count():
-            return Response({"success": False, "detail": _("The group is full.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "O grupo está lotado."}, status=status.HTTP_400_BAD_REQUEST)
 
         for discipline_group in group.discipline.groups.all():
             if student in discipline_group.students.all():
-                return Response({"success": False, "detail": _("User is already in a group.")}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"success": False, "detail": "O usuário já faz parte de um grupo"}, status=status.HTTP_400_BAD_REQUEST)
 
         group.students.add(student)
 
@@ -124,12 +123,12 @@ class GroupViewSet(GenericViewSet):
         logging.info(f"Payload: {data}")
 
         if "id" not in data.keys():
-            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Dados de entrada inválidos."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             student = group.students.get(id=data['id'])
         except AlmaUser.DoesNotExist:
-            return Response({"success": False, "detail": _("User isn't part of the group.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Usuário não faz parte do grupo"}, status=status.HTTP_400_BAD_REQUEST)
 
         group.students.remove(student)
 

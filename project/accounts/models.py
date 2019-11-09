@@ -1,5 +1,4 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.utils import timezone
 from django.db import models
@@ -18,7 +17,7 @@ class UserProfileManager(BaseUserManager):
         """
 
         if not email:
-            raise ValueError(_("Users must have an email address."))
+            raise ValueError("O usuário deve ter um endereço de email.")
 
         # Transforma o email e caixa baixa e será padronizado
         email = self.normalize_email(email)

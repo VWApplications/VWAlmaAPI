@@ -89,5 +89,5 @@ class CreateUserTestCase(APITestCase):
         self.assertEqual(User.objects.count(), 2)
         self.assertEqual(
             response.data['detail'],
-            _("The passwords do not match.")
+            "As senhas não combinam."
         )

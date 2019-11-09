@@ -1,5 +1,4 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from common.models import BaseModel
 from alma.accounts.models import AlmaUser
@@ -73,11 +72,11 @@ class Discipline(BaseModel):
         validators=[
             MaxValueValidator(
                 150,
-                _('There can be no more than %(limit_value)s students in the class.')
+                "Não deve haver mais que %(limit_value)s estudantes na turma."
             ),
             MinValueValidator(
                 5,
-                _('Must have at least %(limit_value)s students in class.')
+                "Deve ter no mínimo %(limit_value)s estudantes na turma."
             )
         ]
     )
@@ -89,11 +88,11 @@ class Discipline(BaseModel):
         validators=[
             MaxValueValidator(
                 15,
-                _('There can be no more than %(limit_value)s monitors in the class.')
+                "Não deve haver mais que %(limit_value)s monitores na turma."
             ),
             MinValueValidator(
                 0,
-                _('Ensure this value is greater than or equal to %(limit_value)s.')
+                "Tenha certeza que o valor é maior ou igual a %(limit_value)s"
             )
         ]
     )

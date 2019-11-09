@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from rest_framework.views import status
 from rest_framework.response import Response
@@ -94,7 +93,7 @@ class UserViewSet(ModelViewSet):
         logging.info("Resetando a senha do usuário.")
 
         if "email" not in request.data:
-            raise ParseError(_("Email is required."))
+            raise ParseError("Email é obrigatório.")
 
         try:
             user = User.objects.get(email=request.data['email'])
@@ -109,7 +108,7 @@ class UserViewSet(ModelViewSet):
 
         # Envia o email
         send_email_template(
-            subject=_('Requesting new password'),
+            subject="Solicitando nova senha plataforma ALMA.",
             template='reset_password_email.html',
             context={'reset_password': reset_password},
             recipient_list=[user.email],
@@ -131,7 +130,7 @@ class UserViewSet(ModelViewSet):
         except PasswordReset.DoesNotExist as error:
             logging.error(error)
             logging.warning(f"Não foi possível encontrar o usuário da chave passada: {request.data['key']}")
-            raise ParseError(_("Invalid key."))
+            raise ParseError("Chave inválida.")
 
         data = {
             "new_password": request.data['new_password'],

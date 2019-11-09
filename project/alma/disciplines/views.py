@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -194,16 +193,16 @@ class DisciplineViewSet(ModelViewSet):
 
         if password == discipline.password:
             if discipline.students_limit <= discipline.students.count():
-                return Response({"success": False, "detail": _("The discipline is full.")}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"success": False, "detail": "A disciplina está lotada."}, status=status.HTTP_400_BAD_REQUEST)
 
             if discipline.is_closed:
-                return Response({"success": False, "detail": _("The discipline is closed.")}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"success": False, "detail": "A disciplina está fechada."}, status=status.HTTP_400_BAD_REQUEST)
 
             discipline.students.add(request.user.alma_user)
             logging.info(f"Lista de estudantes atualizada: {convert_to_json(discipline.students.all())}")
         else:
             logging.warn("Senha incorreta.")
-            return Response({"success": False, "detail": _("Incorrect Password.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Senha incorreta."}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"success": True}, status=status.HTTP_200_OK)
 
@@ -318,18 +317,18 @@ class DisciplineViewSet(ModelViewSet):
         logging.info(f"Payload: {data}")
 
         if "email" not in data.keys():
-            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Dados de entrada incorretos."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             student = AlmaUser.objects.get(user__email=data['email'])
         except AlmaUser.DoesNotExist:
-            return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Usuário não encontrado."}, status=status.HTTP_400_BAD_REQUEST)
 
         if student in discipline.students.all():
-            return Response({"success": False, "detail": _("User is already in the discipline.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Usuário já está na disciplina."}, status=status.HTTP_400_BAD_REQUEST)
 
         if discipline.students_limit <= discipline.students.count():
-            return Response({"success": False, "detail": _("The discipline is full.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "A disciplina está cheia"}, status=status.HTTP_400_BAD_REQUEST)
 
         discipline.students.add(student)
 
@@ -350,15 +349,15 @@ class DisciplineViewSet(ModelViewSet):
         logging.info(f"Payload: {data}")
 
         if "id" not in data.keys():
-            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Dados de entrada incorretos."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             student = AlmaUser.objects.get(id=data['id'])
         except AlmaUser.DoesNotExist:
-            return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Usuário não encontrado."}, status=status.HTTP_400_BAD_REQUEST)
 
         if student not in discipline.students.all() and student not in discipline.monitors.all():
-            return Response({"success": False, "detail": _("Student does not belong to discipline.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Estudante não pertence a disciplina."}, status=status.HTTP_400_BAD_REQUEST)
 
         if student in discipline.students.all():
             discipline.students.remove(student)
@@ -385,25 +384,25 @@ class DisciplineViewSet(ModelViewSet):
         logging.info(f"Payload: {data}")
 
         if "id" not in data.keys():
-            return Response({"success": False, "detail": _("Incorrect Payload.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Dados de entrada invalidos."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             student = AlmaUser.objects.get(id=data['id'])
         except AlmaUser.DoesNotExist:
-            return Response({"success": False, "detail": _("User not found")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Usuário não encontrado."}, status=status.HTTP_400_BAD_REQUEST)
 
         if student not in discipline.students.all() and student not in discipline.monitors.all():
-            return Response({"success": False, "detail": _("Student does not belong to discipline.")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success": False, "detail": "Estudante não pertence a disciplina."}, status=status.HTTP_400_BAD_REQUEST)
 
         if student in discipline.students.all():
             if discipline.monitors_limit <= discipline.monitors.count():
-                return Response({"success": False, "detail": _("Already reached monitor limit")}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"success": False, "detail": "Já completou o limite de monitores"}, status=status.HTTP_400_BAD_REQUEST)
 
             discipline.students.remove(student)
             discipline.monitors.add(student)
         else:
             if discipline.students_limit <= discipline.students.count():
-                return Response({"success": False, "detail": _("The discipline is full.")}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"success": False, "detail": "A disciplina está lotada."}, status=status.HTTP_400_BAD_REQUEST)
 
             discipline.monitors.remove(student)
             discipline.students.add(student)

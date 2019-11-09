@@ -2,7 +2,7 @@
 
 # Código de idioma para esta instalação. Todas as opções podem ser encontradas aqui:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-PORTUGUESE = 'pt-BR'
+PORTUGUESE = 'pt-br'
 ENGLISH = 'en-us'
 LANGUAGE_CODE = PORTUGUESE
 

@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -74,7 +73,7 @@ class QuestionViewSet(GenericViewSet):
                 counter += 1
 
         if question.question_type != TypeSet.V_OR_F.value and counter != 1:
-            raise ParseError(_('You must enter one correct alternative.'))
+            raise ParseError("Você deve entrar com uma alternativa correta.")
 
         for alternative in question.alternatives.all():
             if alternative.id not in data_ids:

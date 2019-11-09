@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -65,7 +64,7 @@ class UpdateUserPasswordTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data['detail'],
-            _('Old password invalid.')
+            "Senha antiga inválida."
         )
 
     def test_invalid_update_user_new_password(self):
@@ -82,5 +81,5 @@ class UpdateUserPasswordTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.data['detail'],
-            _('The new passwords do not match.')
+            "As novas senhas não combinam."
         )
