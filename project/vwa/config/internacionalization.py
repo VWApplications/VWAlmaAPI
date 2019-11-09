@@ -2,9 +2,7 @@
 
 # Código de idioma para esta instalação. Todas as opções podem ser encontradas aqui:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-PORTUGUESE = 'pt-br'
-ENGLISH = 'en-us'
-LANGUAGE_CODE = PORTUGUESE
+LANGUAGE_CODE = 'pt-BR'
 
 # Fuso horário local para esta instalação. As opções podem ser encontradas aqui:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

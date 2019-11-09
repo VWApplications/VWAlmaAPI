@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.conf import settings
-from django.utils import timezone
+from common.utils import format_date
 from django.db import models
 
 
@@ -111,14 +111,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     @property
+    def created_at_formated(self):
+        """
+        Criado em formatado
+        """
+
+        return f"Criado em {format_date(self.created_at)}"
+
+    @property
     def updated_at_formated(self):
         """
-        Data de atualização
+        Atualizado em formatado
         """
 
-        local_datetime = timezone.localtime(self.updated_at)
-
-        return local_datetime.strftime("Atualizado %A, %d de %B de %Y às %H:%M")
+        return f"Atualizado em {format_date(self.updated_at)}"
 
     @property
     def full_name(self):

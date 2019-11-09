@@ -15,7 +15,8 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = (
             'id', 'email', 'name', 'short_name',
-            'created_at', 'updated_at_formated'
+            'created_at', 'updated_at',
+            'created_at_formated', 'updated_at_formated'
         )
 
     def update(self, instance, validated_data):
