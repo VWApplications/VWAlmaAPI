@@ -1,13 +1,21 @@
+from kombu.utils.url import quote
 from decouple import config
 
-rabbitmq_user = config('RABBITMQ_USER', default='vwapp')
-rabbitmq_password = config('RABBITMQ_PASSWORD', default='vwapp')
-rabbitmq_host = config('NEW_RABBITMQ_HOST', default='rabbitmq:5672')
-rabbitmq_vhost = config('RABBITMQ_VHOST', default='vwapp_vhost')
+aws_access_key = quote(config("AWS_ACCESS_KEY_ID"))
+aws_secret_key = quote(config("AWS_SECRET_ACCESS_KEY"))
 
-CELERY_BROKER_URL = f'amqp://{rabbitmq_user}:{rabbitmq_password}@{rabbitmq_host}/{rabbitmq_vhost}'
+CELERY_BROKER_URL = f"sqs://{aws_access_key}:{aws_secret_key}@"
+
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'region': 'sa-east-1',
+    'visibility_timeout': 3600,
+    'polling_interval': 20,
+    'queue_name_prefix': 'vwapp-'
+}
 
 CELERY_TIMEZONE = "America/Sao_Paulo"
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_CACHE_BACKEND = "django-cache"
 
 if config('CI', default=False):
     CELERY_TASK_ALWAYS_EAGER = True

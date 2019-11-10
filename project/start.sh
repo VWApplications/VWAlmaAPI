@@ -10,9 +10,9 @@ celery -A vwa worker -l info -f vwa/celery.logs -D
 
 echo "Inicializando o celery-beat"
 [ -e celerybeat.pid ] && rm celerybeat.pid
-celery -A vwa beat -l info -f vwa/celery-beat.logs --detach
+celery -A vwa beat -l info -f vwa/celery-beat.logs --detach --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
-# Espera o POSTGRESQL inicializar
+echo "Espera o POSTGRESQL inicializar"
 postgres_ready() {
 python3 << END
 import sys
@@ -32,13 +32,13 @@ END
 }
 
 until postgres_ready; do
-  >&2 echo "Postgresql is unavailable - Waiting..."
+  >&2 echo "Postgresql não está acessivel - Espere..."
   sleep 1
 done
 
-echo "Creating migrations and insert into psql database"
+echo "Criando as migrações e inserindo no banco de dados PostgreSQL"
 python3 manage.py makemigrations
 python3 manage.py migrate
 
-echo "Run server"
-gunicorn vwa.wsgi --bind 0.0.0.0:8000 --reload --graceful-timeout=900 --timeout=900 --log-level DEBUG --workers 5
+echo "Rodando o servidor"
+gunicorn vwa.wsgi --bind 0.0.0.0:8000 --reload --graceful-timeout=900 --timeout=900 --workers 5
