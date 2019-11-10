@@ -1,7 +1,7 @@
 from django.db import models
 from common.models import BaseModel
 from alma.sections.models import Section
-from .enum import TypeSet
+from .enum import TypeSet, ExamTypeSet
 
 
 class Question(BaseModel):
@@ -27,18 +27,20 @@ class Question(BaseModel):
         related_name='questions'
     )
 
-    is_exercise = models.BooleanField(
-        "É um exercício?",
-        default=True,
-        help_text="Verifica se a questão criada é um exercício."
-    )
-
-    question_type = models.CharField(
+    question = models.CharField(
         "Tipo de questão",
         max_length=20,
         choices=[(item.value, item.value) for item in TypeSet],
         default=TypeSet.MULTIPLE_CHOICES.value,
         help_text="Tipos de questão que podem ser criadas."
+    )
+
+    type = models.CharField(
+        "Tipo de avaliação",
+        max_length=30,
+        choices=[(item.value, item.value) for item in ExamTypeSet],
+        help_text="Verificar o tipo de avaliação que a questão irá fazer parte.",
+        default=ExamTypeSet.EXERCISE.value
     )
 
     def __str__(self):

@@ -26,7 +26,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = (
-            'id', 'title', 'description', 'section', 'is_exercise', 'question_type',
+            'id', 'title', 'description', 'section', 'question', 'type',
             'alternatives'
         )
 
@@ -43,7 +43,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         if not data['alternatives']:
             raise ParseError("Alternativas vazias.")
 
-        if data['question_type'] != TypeSet.V_OR_F.value:
+        if data['question'] != TypeSet.V_OR_F.value:
             counter = 0
             for alternative in data.get('alternatives', []):
                 if alternative['is_correct'] is True:
@@ -81,11 +81,6 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         alternatives = data.get('alternatives', [])
         del data['alternatives']
-
-        if data.get('question', "exercise") == "exercise":
-            data['is_exercise'] = True
-        else:
-            data['is_exercise'] = False
 
         question = Question.objects.create(**data)
         self.create_alternatives(alternatives, question)

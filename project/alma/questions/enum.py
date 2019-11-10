@@ -9,4 +9,13 @@ class TypeSet(Enum):
     V_OR_F = "V_OR_F"
     MULTIPLE_CHOICES = "MULTIPLE_CHOICES"
     SHOT = "SHOT"
-    SCRATCH_CARD = "SCRATCH_CARD"
+
+
+class ExamTypeSet(Enum):
+    """
+    Tipos de prova a ser aplicada a questão
+    """
+
+    EXERCISE = "EXERCISE"
+    TRADITIONAL = "TRADITIONAL"
+    TBL = "TBL"

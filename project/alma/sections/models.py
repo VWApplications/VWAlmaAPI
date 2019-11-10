@@ -1,6 +1,7 @@
 from django.db import models
 from common.models import BaseModel
 from alma.disciplines.models import Discipline
+from .enum import MethodologyTypeSet
 
 
 class Section(BaseModel):
@@ -24,6 +25,14 @@ class Section(BaseModel):
     description = models.TextField(
         "Descrição",
         help_text="Descrição da seção"
+    )
+
+    methodology = models.CharField(
+        "Tipo de metodologia",
+        max_length=50,
+        choices=[(item.value, item.value) for item in MethodologyTypeSet],
+        help_text="Tipo de metodologia ativa de aprendizado ou tradicional.",
+        default=MethodologyTypeSet.TRADITIONAL.value
     )
 
     is_closed = models.BooleanField(

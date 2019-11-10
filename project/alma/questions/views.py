@@ -6,7 +6,7 @@ from common.generic_view import GenericViewSet, QuestionPagination
 from alma.core import permissions
 from common.utils import convert_to_json
 from . import serializers
-from .enum import TypeSet
+from .enum import TypeSet, ExamTypeSet
 from .models import Question, Alternative
 import logging
 
@@ -51,13 +51,29 @@ class QuestionViewSet(GenericViewSet):
         if section:
             if self.request.data.get('test', False):
                 logging.info("Pegando as questões da prova da seção.")
-                return Question.objects.filter(section=section, is_exercise=False)
+                return Question.objects.filter(
+                    section=section,
+                    type__in=[item.value for item in ExamTypeSet if item.key != ExamTypeSet.EXERCISE.key]
+                )
             else:
                 logging.info("Pegando as questões da lista de exercício da seção.")
-                return Question.objects.filter(section=section, is_exercise=True)
+                return Question.objects.filter(section=section, type=ExamTypeSet.EXERCISE.value)
 
         logging.info("Pegando todas as questões.")
         return Question.objects.all()
+
+    def validate_is_correct(self, data, question, alternative):
+        """
+        Valida a atualização do campo is_correct.
+        """
+
+        if data['is_correct'] is True and question.question != TypeSet.V_OR_F.value:
+            question.alternatives.filter(is_correct=True).update(is_correct=False)
+            alternative.is_correct = True
+        else:
+            alternative.is_correct = data['is_correct']
+
+        alternative.save()
 
     def update_alternatives(self, alternatives, question):
         """
@@ -65,14 +81,14 @@ class QuestionViewSet(GenericViewSet):
         """
 
         alternative_ids = [alternative.id for alternative in question.alternatives.all()]
-        data_ids = [data['id'] for data in alternatives]
+        data_ids = [data['id'] for data in alternatives if "id" in data.keys()]
 
         counter = 0
         for data in alternatives:
             if data['is_correct'] is True:
                 counter += 1
 
-        if question.question_type != TypeSet.V_OR_F.value and counter != 1:
+        if question.question != TypeSet.V_OR_F.value and counter != 1:
             raise ParseError("Você deve entrar com uma alternativa correta.")
 
         for alternative in question.alternatives.all():
@@ -84,16 +100,11 @@ class QuestionViewSet(GenericViewSet):
                 alternative = question.alternatives.get(id=data['id'])
                 alternative.title = data['title']
 
-                if data['is_correct'] is True:
-                    question.alternatives.filter(is_correct=True).update(is_correct=False)
-                    alternative.is_correct = True
-                else:
-                    alternative.is_correct = False
-
-                alternative.is_correct = data['is_correct']
+                self.validate_is_correct(data, question, alternative)
                 alternative.save()
             else:
                 alternative = Alternative.objects.create(title=data['title'], question=question)
+                self.validate_is_correct(data, question, alternative)
                 question.alternatives.add(alternative)
 
     def update(self, request, *args, **kwargs):
@@ -115,13 +126,10 @@ class QuestionViewSet(GenericViewSet):
             question.description = data['description']
 
         if "question" in data.keys():
-            if data['question'] == "exercise":
-                question.is_exercise = True
-            else:
-                question.is_exercise = False
+            question.question = data['question']
 
-        if "question_type" in data.keys():
-            question.question_type = data['question_type']
+        if "type" in data.keys():
+            question.type = data['type']
 
         if "alternatives" in data.keys():
             alternatives = data.get('alternatives', [])
