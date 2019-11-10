@@ -114,8 +114,11 @@ class QuestionViewSet(GenericViewSet):
         if "description" in data.keys():
             question.description = data['description']
 
-        if "is_exercise" in data.keys():
-            question.is_exercise = data['is_exercise']
+        if "question" in data.keys():
+            if data['question'] == "exercise":
+                question.is_exercise = True
+            else:
+                question.is_exercise = False
 
         if "question_type" in data.keys():
             question.question_type = data['question_type']

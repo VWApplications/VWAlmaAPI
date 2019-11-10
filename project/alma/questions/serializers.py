@@ -2,6 +2,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework import serializers
 from common.utils import convert_to_json
 from .models import Question, Alternative
+from .enum import TypeSet
 import logging
 
 
@@ -42,13 +43,14 @@ class QuestionSerializer(serializers.ModelSerializer):
         if not data['alternatives']:
             raise ParseError("Alternativas vazias.")
 
-        counter = 0
-        for alternative in data.get('alternatives', []):
-            if alternative['is_correct'] is True:
-                counter += 1
+        if data['question_type'] != TypeSet.V_OR_F.value:
+            counter = 0
+            for alternative in data.get('alternatives', []):
+                if alternative['is_correct'] is True:
+                    counter += 1
 
-        if counter != 1:
-            raise ParseError("Você deve entrar com uma alternativa correta.")
+            if counter != 1:
+                raise ParseError("Você deve entrar com uma alternativa correta.")
 
         return data
 
@@ -79,6 +81,11 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         alternatives = data.get('alternatives', [])
         del data['alternatives']
+
+        if data.get('question', "exercise") == "exercise":
+            data['is_exercise'] = True
+        else:
+            data['is_exercise'] = False
 
         question = Question.objects.create(**data)
         self.create_alternatives(alternatives, question)
