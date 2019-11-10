@@ -4,6 +4,14 @@
 #
 # Author: Victor Arnaud <victorhad@gmail.com>
 
+echo "Inicializando o celery"
+[ -e celeryd.pid ] && rm celeryd.pid
+celery -A vwa worker -l info -f vwa/celery.logs -D
+
+echo "Inicializando o celery-beat"
+[ -e celerybeat.pid ] && rm celerybeat.pid
+celery -A vwa beat -l info -f vwa/celery-beat.logs --detach
+
 # Espera o POSTGRESQL inicializar
 postgres_ready() {
 python3 << END

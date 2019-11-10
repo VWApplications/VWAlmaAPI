@@ -26,7 +26,7 @@ remove:
 
 requirements:
 	# Verifica todas as dependências
-	docker-compose exec vwapp pip3 freeze
+	docker-compose exec vwapp pip3 freeze > project/requirements.txt
 
 flake8:
 	# Roda o flake8

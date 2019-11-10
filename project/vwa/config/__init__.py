@@ -10,5 +10,6 @@ from .security import SECRET_KEY
 from .template import TEMPLATES
 from .users import AUTH_USER_MODEL
 from .email import EMAIL_BACKEND, ANYMAIL, DEFAULT_FROM_EMAIL
+from .celery import *
 from .sentry import *
 from .storage import *
