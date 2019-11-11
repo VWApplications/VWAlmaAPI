@@ -48,8 +48,8 @@ def format_date(date):
 
     local_datetime = timezone.localtime(date)
 
-    month = date.strftime("%B")
+    month = local_datetime.strftime("%B")
 
-    formated_date = date.strftime(f"%d de {months[month]} de %Y às %H:%M")
+    formated_date = local_datetime.strftime(f"%d de {months[month]} de %Y às %H:%M")
 
     return formated_date

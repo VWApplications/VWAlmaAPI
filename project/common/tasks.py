@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals
 from vwa.celery import app
-import time
 
 
 @app.task(bind=True, max_retries=3)
