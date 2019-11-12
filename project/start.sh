@@ -22,7 +22,7 @@ try:
     psycopg2.connect(
       dbname=os.environ.get("POSTGRES_DB", "vwapp_db"),
       user=os.environ.get("POSTGRES_USER", "vwapp"),
-      password=os.environ.get("POSTGRES_PASSWORD", "vwapp"),
+      password=os.environ.get("POSTGRES_PASSWORD", "vwapp130136484"),
       host=os.environ.get("POSTGRES_HOST", "postgres")
     )
 except psycopg2.OperationalError:
