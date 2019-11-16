@@ -63,6 +63,9 @@ class SeePage(BasePermission):
     """
 
     def has_permission(self, request, view):
+        if request.user.is_staff:
+            return True
+
         section = view.get_section()
         if not section:
             discipline = view.get_discipline()
@@ -90,6 +93,9 @@ class SeeObjPage(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
+        if request.user.is_staff:
+            return True
+
         try:
             perm = GenericAlmaPermission(request, obj.discipline)
         except AttributeError:
@@ -110,6 +116,9 @@ class CreateSomethingInYourOwnDisciplines(BasePermission):
     """
 
     def has_permission(self, request, view):
+        if request.user.is_staff:
+            return True
+
         section = view.get_section()
         if not section:
             discipline = view.get_discipline()
@@ -136,6 +145,9 @@ class UpdateYourOwnDisciplines(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
+        if request.user.is_staff:
+            return True
+
         try:
             perm = GenericAlmaPermission(request, obj.discipline)
         except AttributeError:

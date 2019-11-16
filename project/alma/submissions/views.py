@@ -27,7 +27,7 @@ class SubmissionViewSet(GenericViewSet):
 
         logging.info(f"###### Action disparada: {self.action} ######")
 
-        if self.action == 'list' or self.action == 'retrieve' or self.action == 'delete':
+        if self.action == 'list' or self.action == 'retrieve' or self.action == 'destroy':
             # Só o administrador pode ver
             permission_classes = (IsAuthenticated, permissions.OnlyAdmin)
         elif self.action == 'create':
