@@ -17,7 +17,8 @@ ALMA_APPS = [
     'alma.disciplines',
     'alma.groups',
     'alma.sections',
-    'alma.questions'
+    'alma.questions',
+    'alma.submissions'
 ]
 
 GENERIC_APPS = ['common']

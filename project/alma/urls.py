@@ -6,5 +6,6 @@ urlpatterns = [
     path('disciplines/', include('alma.disciplines.urls')),
     path('groups/', include('alma.groups.urls')),
     path('sections/', include('alma.sections.urls')),
-    path('questions/', include('alma.questions.urls'))
+    path('questions/', include('alma.questions.urls')),
+    path('submissions/', include('alma.submissions.urls'))
 ]

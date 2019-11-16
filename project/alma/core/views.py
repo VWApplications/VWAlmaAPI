@@ -7,7 +7,7 @@ from common.generic_view import CustomPagination
 from common.email import send_email_template
 from .serializers import NewsTagsSerializer, TagSerializer
 from .models import News, Tag
-from .permissions import CreateUpdateDestroyAdminPermission
+from common.permissions import CreateUpdateDestroyAdminPermission
 import logging
 
 
