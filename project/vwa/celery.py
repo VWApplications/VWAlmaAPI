@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 # from celery.schedules import crontab
+from django.conf import settings
 from celery import Celery
 import os
 
@@ -15,7 +16,7 @@ app = Celery('vwa')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Carregue módulos de tarefas (tasks.py) de todas as configurações de aplicativos Django registradas.
-app.autodiscover_tasks()
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 # Tarefas agendadas
 # app.conf.beat_schedule = {
