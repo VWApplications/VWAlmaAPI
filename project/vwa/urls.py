@@ -7,6 +7,7 @@ urlpatterns = [
     path('api-token/', jwt_views.TokenObtainPairView.as_view(), name='login'),
     path('refresh-token/', jwt_views.TokenRefreshView.as_view(), name='login'),
     path('users/', include('accounts.urls')),
+    path('common/', include('common.urls')),
     path('alma/', include('alma.urls'))
 ]
 

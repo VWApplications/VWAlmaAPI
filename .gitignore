@@ -110,7 +110,6 @@ venv.bak/
 
 # Media and static files
 mediafiles
-staticfiles
 
 # Migrations and DB
 .ignore/
