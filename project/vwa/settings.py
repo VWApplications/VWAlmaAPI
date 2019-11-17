@@ -9,7 +9,7 @@ if DEBUG:
     try:
         logging.basicConfig(
             filename='vwa/alma.log',
-            filemode='a',
+            filemode='w',
             format='[%(asctime)s] [%(levelname)s] [%(pathname)s - %(funcName)s - %(lineno)d]: %(message)s',
             level=logging.INFO
         )

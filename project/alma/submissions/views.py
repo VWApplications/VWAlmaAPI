@@ -7,6 +7,7 @@ from common.generic_view import GenericViewSet
 from common import permissions
 from alma.sections.models import Section
 from alma.accounts.models import AlmaUser
+from alma.accounts.enum import AlmaPermissionSet
 from . import serializers
 from .tasks import calculate_score
 from .enum import ExamSet
@@ -72,9 +73,9 @@ class SubmissionViewSet(GenericViewSet):
         if not Section.objects.filter(id=request.data['section']).exists():
             raise ParseError("Sessão não encontrada.")
 
-        if not AlmaUser.objects.filter(id=request.data['student']).exists():
+        if not AlmaUser.objects.filter(id=request.data['student'], permission=AlmaPermissionSet.STUDENT.value).exists():
             raise ParseError("Estudante não encontrado.")
 
-        calculate_score.delay(request.data)
+        calculate_score(request.data)
 
         return Response({"success": True}, status=status.HTTP_200_OK)

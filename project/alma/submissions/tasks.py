@@ -1,14 +1,15 @@
 from alma.questions.models import Alternative, Question
 from alma.submissions.models import Submission
+from rest_framework.exceptions import ParseError
 from alma.sections.models import Section
 from alma.accounts.models import AlmaUser
 from common.utils import convert_to_json
-from vwa.celery import app
+# from vwa.celery import app
 import logging
 
 
-@app.task(bind=True, max_retries=3)
-def calculate_score(self, validated_data):
+# @app.task(bind=True, max_retries=3)
+def calculate_score(validated_data):
     """
     Cálcula a nota e a pontuação da avaliação de forma assincrona.
     """
@@ -63,7 +64,10 @@ def calculate_score(self, validated_data):
                 if correct_alternative.id == alternative_id:
                     score += int(alternative[1])
 
-    grade = round((score / qtd) * 10, 2)
+    try:
+        grade = round((score / qtd) * 10, 2)
+    except ZeroDivisionError:
+        raise ParseError("Campo de respostas não pode ser vazio.")
 
     correct_answers = {
         "VorF": v_or_f,
