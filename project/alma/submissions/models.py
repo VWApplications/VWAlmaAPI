@@ -5,6 +5,7 @@ from alma.sections.models import Section
 from alma.accounts.models import AlmaUser
 from .enum import ExamSet
 
+
 class Submission(BaseModel):
     """
     Submissão generica.

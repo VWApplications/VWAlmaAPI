@@ -1,6 +1,5 @@
 from rest_framework.permissions import BasePermission
 from alma.accounts.enum import AlmaPermissionSet
-from common.permissions import GenericPermission
 import logging
 
 

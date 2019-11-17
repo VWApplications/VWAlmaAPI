@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
-from alma.sections.models import Section
-from alma.accounts.models import AlmaUser
 from alma.questions.models import Alternative, Question
 from .enum import ExamSet
 from .models import Submission
@@ -69,7 +67,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
                     if obj.is_correct == alternative[1]:
                         score += 4
                 v_or_f[question[0]] = alternative_answes
-        
+
         if "multiple_choices" in answers.keys():
             for question in answers['multiple_choices'].items():
                 qtd += 4
@@ -99,7 +97,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
                     if correct_alternative.id == alternative_id:
                         score += int(alternative[1])
 
-        grade = round((score/qtd) * 10, 2)
+        grade = round((score / qtd) * 10, 2)
 
         correct_answers = {
             "VorF": v_or_f,
