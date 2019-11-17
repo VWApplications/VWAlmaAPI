@@ -53,7 +53,7 @@ class QuestionViewSet(GenericViewSet):
                 logging.info("Pegando as questões da prova da seção.")
                 return Question.objects.filter(
                     section=section,
-                    type__in=[item.value for item in ExamTypeSet if item.key != ExamTypeSet.EXERCISE.key]
+                    type__in=[item.value for item in ExamTypeSet if item.value != ExamTypeSet.EXERCISE.value]
                 )
             else:
                 logging.info("Pegando as questões da lista de exercício da seção.")
