@@ -15,10 +15,14 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = ['id', 'section', 'answers', 'score', 'exam', 'student']
+        fields = ['id', 'section', 'answers', 'score', 'exam', 'qtd', 'grade', 'answers_test', 'student']
         extra_kwargs = {
             "section": {"required": False},
-            "student": {"required": False}
+            "student": {"required": False},
+            "answers_test": {"read_only": True},
+            "score": {"read_only": True},
+            "qtd": {"read_only": True},
+            "grade": {"read_only": True}
         }
 
     def validate(self, data):
@@ -27,8 +31,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
         """
 
         logging.info("Validando os dados para criação da submissão.")
-
-        self.calculate_score(data['answers'])
 
         if "section" not in data.keys():
             raise ParseError("A identificação da sessão da avaliação é obrigatória.")
@@ -52,15 +54,21 @@ class SubmissionSerializer(serializers.ModelSerializer):
         logging.info(f"Respostas: {answers}")
         score = 0
         qtd = 0
+        v_or_f = {}
+        shots = {}
+        multiple_choices = {}
 
         if "VorF" in answers.keys():
-            for question in answers['VorF'].values():
-                for alternative in question.items():
+            for question in answers['VorF'].items():
+                alternative_answes = {}
+                for alternative in question[1].items():
                     qtd += 4
                     alternative_id = int(alternative[0].split("A")[1])
                     obj = Alternative.objects.get(id=alternative_id)
+                    alternative_answes[f"A{obj.id}"] = obj.is_correct
                     if obj.is_correct == alternative[1]:
                         score += 4
+                v_or_f[question[0]] = alternative_answes
         
         if "multiple_choices" in answers.keys():
             for question in answers['multiple_choices'].items():
@@ -68,6 +76,9 @@ class SubmissionSerializer(serializers.ModelSerializer):
                 question_id = int(question[0].split("Q")[1])
                 obj = Question.objects.get(id=question_id)
                 for alternative in obj.alternatives.all():
+                    if alternative.is_correct:
+                        multiple_choices[f"Q{obj.id}"] = alternative.id
+
                     if alternative.id == int(question[1]):
                         if alternative.is_correct:
                             score += 4
@@ -80,6 +91,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
                 correct_alternative = None
                 for alternative in obj.alternatives.all():
                     if alternative.is_correct:
+                        shots[f"Q{obj.id}"] = f"A{alternative.id}"
                         correct_alternative = alternative
 
                 for alternative in question[1].items():
@@ -89,7 +101,16 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
         grade = round((score/qtd) * 10, 2)
 
-        return score, qtd, grade
+        answers_test = {
+            "VorF": v_or_f,
+            "shots": shots,
+            "multiple_choices": multiple_choices
+
+        }
+        logging.info(f"Gabarito: {answers_test}")
+        logging.info(f"Nota: {score}/{qtd} x 10 = {grade}")
+
+        return score, qtd, grade, answers_test
 
     def create(self, validated_data):
         """
@@ -98,15 +119,15 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
         logging.info(f"Dados para criação da submissão: {validated_data}")
 
-        score, qtd, grade = self.calculate_score(validated_data['answers'])
-        logging.info(f"Nota: {score}/{qtd} x 10 = {grade}")
+        score, qtd, grade, answers_test = self.calculate_score(validated_data['answers'])
 
         submission = Submission.objects.create(
             section=validated_data['section'],
             student=validated_data['student'],
             answers=validated_data['answers'],
             exam=validated_data['exam'],
-            score=score, qtd=qtd, grade=grade
+            score=score, qtd=qtd, grade=grade,
+            answers_test=answers_test
         )
 
         logging.info("Submissão criada com sucesso!")
