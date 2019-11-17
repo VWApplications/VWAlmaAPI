@@ -15,11 +15,11 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = ['id', 'section', 'answers', 'score', 'exam', 'qtd', 'grade', 'answers_test', 'student']
+        fields = ['id', 'section', 'answers', 'score', 'exam', 'qtd', 'grade', 'correct_answers', 'student']
         extra_kwargs = {
             "section": {"required": False},
             "student": {"required": False},
-            "answers_test": {"read_only": True},
+            "correct_answers": {"read_only": True},
             "score": {"read_only": True},
             "qtd": {"read_only": True},
             "grade": {"read_only": True}
@@ -101,16 +101,16 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
         grade = round((score/qtd) * 10, 2)
 
-        answers_test = {
+        correct_answers = {
             "VorF": v_or_f,
             "shots": shots,
             "multiple_choices": multiple_choices
 
         }
-        logging.info(f"Gabarito: {answers_test}")
+        logging.info(f"Gabarito: {correct_answers}")
         logging.info(f"Nota: {score}/{qtd} x 10 = {grade}")
 
-        return score, qtd, grade, answers_test
+        return score, qtd, grade, correct_answers
 
     def create(self, validated_data):
         """
@@ -119,7 +119,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
         logging.info(f"Dados para criação da submissão: {validated_data}")
 
-        score, qtd, grade, answers_test = self.calculate_score(validated_data['answers'])
+        score, qtd, grade, correct_answers = self.calculate_score(validated_data['answers'])
 
         submission = Submission.objects.create(
             section=validated_data['section'],
@@ -127,7 +127,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
             answers=validated_data['answers'],
             exam=validated_data['exam'],
             score=score, qtd=qtd, grade=grade,
-            answers_test=answers_test
+            correct_answers=correct_answers
         )
 
         logging.info("Submissão criada com sucesso!")

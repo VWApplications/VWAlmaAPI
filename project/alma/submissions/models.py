@@ -18,7 +18,7 @@ class Submission(BaseModel):
     )
 
     answers = JSONField("Respostas do estudante.")
-    answers_test = JSONField("Gabarito da avaliação.")
+    correct_answers = JSONField("Gabarito da avaliação.")
 
     score = models.PositiveIntegerField(
         "Pontuação",
