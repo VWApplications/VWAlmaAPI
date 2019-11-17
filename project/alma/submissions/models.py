@@ -25,6 +25,18 @@ class Submission(BaseModel):
         help_text="Pontuação da avaliação"
     )
 
+    qtd = models.PositiveIntegerField(
+        "Quantidade total",
+        default=0,
+        help_text="Quantidade total de pontos"
+    )
+
+    grade = models.PositiveIntegerField(
+        "Nota",
+        default=0,
+        help_text="Nota final"
+    )
+
     exam = models.CharField(
         "Tipo de avaliação",
         max_length=50,
