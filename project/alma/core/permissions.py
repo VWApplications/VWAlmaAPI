@@ -125,6 +125,7 @@ class CreateSomethingInYourOwnDisciplines(BasePermission):
             discipline = section.discipline
 
         if not discipline:
+            logging.info("Permissão Negada.")
             return False
 
         perm = GenericAlmaPermission(request, discipline)
